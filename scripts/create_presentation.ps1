@@ -96,7 +96,7 @@ function Add-StandardSlide($slideNumber, $title, $bulletPoints) {
 # --- SLIDE 1 ---
 Write-Host "Creating Slide 1: Title..."
 Add-HeaderSlide -title "UI Sketch-to-Code Converter" `
-  -subtitle "Automated Front-End Code Generation from Hand-Drawn Wireframes using Computer Vision and Vision-Language Models`n`nProject Team:`n• Student Name: Arun Sharma (and Team Members)`n• Course Code: COM71123 | B.Tech CSE (7th Semester)`n• Supervisor / Mentor: Project Evaluation Committee`n• Repository: https://github.com/arun1645/ui-sketch-to-code"
+  -subtitle "Automated Front-End Code Generation from Hand-Drawn Wireframes using Computer Vision and Vision-Language Models`n`nPROJECT TEAM & CREDENTIALS:`n• Members: Arun Sharma (2023A1R053) & Aditya Verma (2023A1R058)`n• Course: COM-711 | B.Tech CSE (7th Semester)`n• Mentor: Mrs. Meenakshi Bhat`n• Repository: https://github.com/arun1645/ui-sketch-to-code"
 
 # --- SLIDE 2 ---
 Write-Host "Creating Slide 2: Problem Statement..."
@@ -176,7 +176,7 @@ $sub8.TextFrame.TextRange.Font.Size = 10
 $sub8.TextFrame.TextRange.Font.Color.RGB = 0x888888
 
 # Picture 1: Pytest Terminal Execution Screenshot
-$pytestImg = "C:\Users\ashar\.gemini\antigravity\brain\060f4ad1-eaee-4d28-9c41-848a45303bd6\.user_uploaded\media_1791926784695_941b7ab8.png"
+$pytestImg = "C:\Users\ashar\ui-sketch-to-code\evidence_screenshots\01_pytest_30_tests_passed.png"
 if (Test-Path $pytestImg) {
     # Left Box Border
     $rect1 = $slide8.Shapes.AddShape(1, 55, 95, 435, 340)
@@ -196,7 +196,7 @@ if (Test-Path $pytestImg) {
 }
 
 # Picture 2: OpenCV Bounding Boxes Screenshot
-$cvImg = "C:\Users\ashar\ui-sketch-to-code\tests\sample_outputs\bounding_boxes.png"
+$cvImg = "C:\Users\ashar\ui-sketch-to-code\evidence_screenshots\02_opencv_bounding_boxes.png"
 if (Test-Path $cvImg) {
     # Right Box Border
     $rect2 = $slide8.Shapes.AddShape(1, 510, 95, 400, 340)
@@ -217,7 +217,7 @@ if (Test-Path $cvImg) {
 
 # Summary Bar at bottom of Slide 8
 $summaryBox8 = $slide8.Shapes.AddTextbox(1, 55, 440, 850, 60)
-$summaryBox8.TextFrame.TextRange.Text = "Key Validation Results: All 30 unit tests pass locally. Hand-drawn components are normalized to [0.0 - 1.0] relative float coordinates. Output compiled into valid HTML5/CSS (output/week4/index.html) adhering to strict JSON Schema."
+$summaryBox8.TextFrame.TextRange.Text = "Key Validation Results: All 30 unit tests pass locally in 19s. Hand-drawn components are normalized to [0.0 - 1.0] relative float coordinates. Output compiled into valid HTML5/CSS (output/week4/index.html) adhering to strict JSON Schema."
 $summaryBox8.TextFrame.TextRange.Font.Size = 11
 $summaryBox8.TextFrame.TextRange.Font.Color.RGB = 0x444444
 
@@ -229,13 +229,13 @@ $foot8.TextFrame.TextRange.Font.Color.RGB = 0x999999
 
 # --- SLIDE 9 ---
 Write-Host "Creating Slide 9: Plane Progress & Milestone Tracking..."
-Add-StandardSlide -slideNumber 9 -title "Plane Progress & Milestone Tracking" -bulletPoints @(
+Add-StandardSlide -slideNumber 9 -title "Plane Progress & Milestone Tracking (4 of 12 Completed)" -bulletPoints @(
   "COM71123-3 (Week 1): Setup environments, Git branching strategy, and local Ollama model -> [STATUS: DONE]",
   "COM71123-4 (Week 2): OpenCV pre-processing, contrast enhancement, bounding box normalization -> [STATUS: DONE]",
   "COM71123-5 (Week 3): GPT-4o-mini integration with strict JSON schema enforcement -> [STATUS: DONE]",
   "COM71123-6 (Week 4): LLaVA-v1.6-7B fallback integration and intelligent model router -> [STATUS: DONE]",
-  "COM71123-7 (Week 5): DOMPurify HTML sanitization and automated syntax validation -> [STATUS: IN PROGRESS]",
-  "COM71123-8 (Week 6): Interactive Web Dashboard with Real-Time Live Preview -> [STATUS: PLANNED]"
+  "COM71123-7 (Week 5): Component-specific HTML5 & Tailwind CSS code generation logic -> [STATUS: PLANNED]",
+  "COM71123-8 (Week 6): Abstract Syntax Tree (AST) Validation Engine with html-validate -> [STATUS: PLANNED]"
 )
 
 # --- SLIDE 10 ---
@@ -250,10 +250,8 @@ Add-StandardSlide -slideNumber 10 -title "Challenges & Corrective Actions" -bull
 # --- SLIDE 11 ---
 Write-Host "Creating Slide 11: Upcoming Milestones & Work Plan..."
 Add-StandardSlide -slideNumber 11 -title "Upcoming Milestones & Work Plan" -bulletPoints @(
-  "Week 5 (Code Sanitization & Linting): Connect Node.js DOMPurify and html-validate to strip unsafe tags and verify W3C compliance automatically.",
-  "Week 6 (Interactive Web Application): Build a web interface allowing users to upload a photo of a sketch and view the live rendered page side-by-side with generated code.",
-  "Week 7 (Multi-Layout Benchmarking): Benchmark accuracy across diverse real-world paper wireframes, mobile UI mockups, and complex multi-column grids.",
-  "Week 8 (Final Evaluation & Deployment): Prepare comprehensive technical documentation, packaging, containerization, and final project defense."
+  "WEEK 5 | COM71123-7 (Component-Specific Code Generation Logic): Develop the core logic for generating HTML5 and Tailwind CSS for the five deterministic UI components (Navigation Bars, Login/Signup Forms, Hero Sections, Content Cards, and Form Input Fields).",
+  "WEEK 6 | COM71123-8 (Abstract Syntax Tree Validation Engine): Integrate and configure the html-validate library to check structural integrity, capture and parse validation error logs, and report validation status of generated HTML."
 )
 
 # --- SLIDE 12 ---
