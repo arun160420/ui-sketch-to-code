@@ -35,7 +35,7 @@ UI_COMPONENT_JSON_SCHEMA: Dict[str, Any] = {
                         },
                         "component_type": {
                             "type": "string",
-                            "enum": ["header", "navbar", "button", "input", "card", "footer", "text", "image", "form"],
+                            "enum": ["header", "navbar", "button", "input", "card", "footer", "text", "image", "form", "hero"],
                             "description": "Semantic UI component classification."
                         },
                         "bounding_box": {
