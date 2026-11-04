@@ -1,13 +1,13 @@
 """
 Model Router and Fallback Management for UI Sketch-to-Code Generation.
 Dynamically routes requests between GPT-4o-mini (cloud) and LLaVA-v1.6-7B (local Ollama)
-based on API key availability, service health, and performance.
+based on API key availability, service health, performance, and AST error refinement (Week 7: COM71123-9).
 """
 
 import os
 import time
 import logging
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional, Tuple, List
 from enum import Enum
 from dotenv import load_dotenv
 
@@ -161,3 +161,32 @@ class ModelRouter:
 
         metadata["execution_time_seconds"] = round(time.time() - start_time, 4)
         return {"data": ui_result, "metadata": metadata}
+
+    def refine(
+        self,
+        erroneous_payload: Dict[str, Any],
+        extracted_errors: list,
+        force_mock: bool = False
+    ) -> Dict[str, Any]:
+        """
+        Routes AST validation error refinement to GPT-4o-mini or local LLaVA
+        based on active routing strategy and availability (Week 7: COM71123-9).
+        """
+        if force_mock or self.strategy == RoutingStrategy.MOCK:
+            return self.gpt_client.refine_code(erroneous_payload, extracted_errors, mock=True)
+
+        if self.strategy == RoutingStrategy.LLAVA_ONLY:
+            return self.llava_client.refine_code(erroneous_payload, extracted_errors, mock=not self.llava_client.is_server_running())
+
+        if self.strategy == RoutingStrategy.GPT_ONLY:
+            return self.gpt_client.refine_code(erroneous_payload, extracted_errors, mock=False)
+
+        # AUTO strategy
+        gpt_ready, _ = self.check_gpt_availability()
+        if gpt_ready:
+            try:
+                return self.gpt_client.refine_code(erroneous_payload, extracted_errors, mock=False)
+            except Exception as e:
+                logger.warning(f"GPT refinement failed ({e}), falling back to LLaVA / mock.")
+
+        return self.llava_client.refine_code(erroneous_payload, extracted_errors, mock=not self.llava_client.is_server_running())

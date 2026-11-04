@@ -1,6 +1,7 @@
 """
 GPT-4o-mini API client for UI wireframe code generation.
-Includes secure API key management, JSON schema enforcement, and robust error handling.
+Includes secure API key management, JSON schema enforcement, robust error handling,
+and multi-turn AST error refinement routing (Week 7: COM71123-9).
 """
 
 import os
@@ -219,3 +220,52 @@ class GPTCodeGenerator:
             raise SchemaValidationError(f"Response from GPT-4o-mini was not valid JSON: {e}") from e
         except Exception as e:
             raise GPTAPIError(f"Unexpected error during GPT-4o-mini code generation: {e}") from e
+
+    def refine_code(
+        self,
+        erroneous_payload: Dict[str, Any],
+        extracted_errors: list,
+        mock: bool = False
+    ) -> Dict[str, Any]:
+        """
+        Submits AST validation error logs and the erroneous code back to GPT-4o-mini
+        to receive corrected code conforming to UI_COMPONENT_JSON_SCHEMA (Week 7: COM71123-9).
+        """
+        if mock:
+            logger.info("Refining code via deterministic mock repair (mock=True).")
+            from src.refinement_loop import AgenticRefinementLoop
+            repairer = AgenticRefinementLoop(validator_engine=None)
+            return repairer._default_mock_repair_generator(erroneous_payload, extracted_errors)
+
+        from src.refinement_loop import ErrorPromptFormatter
+        client = self.get_client()
+        messages = ErrorPromptFormatter.build_multiturn_refinement_messages(
+            extracted_errors=extracted_errors,
+            erroneous_payload=erroneous_payload
+        )
+
+        try:
+            response = client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                temperature=self.temperature,
+                max_tokens=self.max_tokens,
+                response_format={
+                    "type": "json_schema",
+                    "json_schema": UI_COMPONENT_JSON_SCHEMA
+                }
+            )
+
+            response_content = response.choices[0].message.content
+            if not response_content:
+                raise GPTAPIError("Received empty response from GPT-4o-mini during error refinement.")
+
+            raw_data = json.loads(response_content)
+            return validate_ui_payload(raw_data)
+
+        except openai.AuthenticationError as e:
+            raise GPTAPIError(f"Authentication failed during refinement: {e}") from e
+        except openai.RateLimitError as e:
+            raise GPTAPIError(f"OpenAI rate limit exceeded during refinement: {e}") from e
+        except Exception as e:
+            raise GPTAPIError(f"Error during GPT-4o-mini code refinement: {e}") from e

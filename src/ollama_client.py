@@ -1,6 +1,7 @@
 """
 Local LLaVA-v1.6-7B client via Ollama for UI wireframe code generation fallback.
-Handles local REST endpoints, prompt construction, JSON formatting, and schema validation.
+Handles local REST endpoints, prompt construction, JSON formatting, schema validation,
+and AST error refinement routing (Week 7: COM71123-9).
 """
 
 import os
@@ -98,6 +99,8 @@ class LLaVAClient:
             "2. Output MUST be strictly valid JSON without any markdown code fences or conversational text.\n"
             f"3. Include these exact required JSON keys: {schema_props}.\n"
             "4. Each item in 'components' must have: 'component_id', 'component_type', 'bounding_box', 'html', 'css_classes'.\n"
+            "5. Allowed component_type values: ['navbar', 'header', 'button', 'input', 'card', 'footer', 'text', 'image', 'form', 'hero'].\n\n"
+            "Respond ONLY with the JSON object."
         )
         return prompt
 
@@ -117,7 +120,7 @@ class LLaVAClient:
                 "component_type": ctype,
                 "bounding_box": box_coords,
                 "html": f"<{ctype} class=\"llava-ui-{ctype}\" id=\"{comp_id}\">LLaVA Generated {ctype.capitalize()}</{ctype}>",
-                "css_classes": f"llava-ui-{ctype} local-component-{idx+1}"
+                "css_classes": f"llava-ui-{ctype} component-{idx+1}"
             })
 
         mock_payload = {
@@ -213,3 +216,51 @@ class LLaVAClient:
             raise OllamaResponseError(f"Ollama response was not valid JSON: {e}\nRaw output: {raw_text[:200]}") from e
         except Exception as e:
             raise OllamaResponseError(f"Unexpected error calling Ollama LLaVA: {e}") from e
+
+    def refine_code(
+        self,
+        erroneous_payload: Dict[str, Any],
+        extracted_errors: list,
+        mock: bool = False
+    ) -> Dict[str, Any]:
+        """
+        Submits AST validation errors and the erroneous payload to local LLaVA
+        to receive corrected code conforming to UI_COMPONENT_JSON_SCHEMA (Week 7: COM71123-9).
+        """
+        if mock or not self.is_server_running():
+            logger.info("Refining code via deterministic fallback repair (mock/offline).")
+            from src.refinement_loop import AgenticRefinementLoop
+            repairer = AgenticRefinementLoop(validator_engine=None)
+            return repairer._default_mock_repair_generator(erroneous_payload, extracted_errors)
+
+        from src.refinement_loop import ErrorPromptFormatter
+        full_html = erroneous_payload.get("full_html", "")
+        diagnostic_prompt = ErrorPromptFormatter.format_diagnostic_prompt(
+            extracted_errors=extracted_errors,
+            original_code=full_html,
+            component_type=erroneous_payload.get("layout_type", "UI"),
+            include_schema_rules=True
+        )
+
+        payload = {
+            "model": self.model,
+            "prompt": diagnostic_prompt,
+            "format": "json",
+            "stream": False,
+            "options": {"temperature": 0.2, "num_predict": 2500}
+        }
+
+        try:
+            resp = requests.post(f"{self.base_url}/api/generate", json=payload, timeout=self.timeout)
+            if resp.status_code != 200:
+                raise OllamaResponseError(f"Ollama returned HTTP {resp.status_code}: {resp.text}")
+
+            result_json = resp.json()
+            raw_text = result_json.get("response", "").strip()
+            parsed = json.loads(raw_text)
+            return validate_ui_payload(parsed)
+        except Exception as e:
+            logger.warning(f"Live LLaVA refinement failed ({e}), using fallback repair.")
+            from src.refinement_loop import AgenticRefinementLoop
+            repairer = AgenticRefinementLoop(validator_engine=None)
+            return repairer._default_mock_repair_generator(erroneous_payload, extracted_errors)
