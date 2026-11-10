@@ -131,16 +131,33 @@ class GPTCodeGenerator:
         components = []
 
         types_cycle = ["navbar", "header", "input", "button", "card", "footer"]
+        tag_map = {
+            "navbar": "nav",
+            "header": "header",
+            "input": "input",
+            "button": "button",
+            "card": "div",
+            "footer": "footer"
+        }
+
         for idx, b in enumerate(boxes[:6]):
             ctype = types_cycle[idx % len(types_cycle)]
+            tag = tag_map.get(ctype, "div")
             comp_id = f"comp-{b.get('id', idx + 1)}"
             box_coords = b.get("norm_box", [0.0, 0.0, 1.0, 0.1])
+
+            if tag == "input":
+                comp_html = f'<input type="text" class="ui-input" id="{comp_id}" placeholder="Sample Input">'
+            elif tag == "button":
+                comp_html = f'<button type="button" class="ui-button" id="{comp_id}">Sample Button</button>'
+            else:
+                comp_html = f'<{tag} class="ui-{ctype}" id="{comp_id}">Sample {ctype.capitalize()}</{tag}>'
 
             components.append({
                 "component_id": comp_id,
                 "component_type": ctype,
                 "bounding_box": box_coords,
-                "html": f"<{ctype} class=\"ui-{ctype}\" id=\"{comp_id}\">Sample {ctype.capitalize()}</{ctype}>",
+                "html": comp_html,
                 "css_classes": f"ui-{ctype} component-{idx+1}"
             })
 
