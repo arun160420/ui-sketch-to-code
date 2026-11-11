@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SketchToCode AI — Autonomous Wireframe to Tailwind Synthesis</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.4/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -214,20 +216,32 @@
       <!-- Tab Content Area -->
       <div class="flex-1 overflow-hidden relative">
 
-        <!-- TAB 1: Live Interactive Preview -->
+        <!-- TAB 1: Live Interactive Preview (Sandboxed Iframe) -->
         <div id="content-preview" class="studio-content w-full h-full flex items-center justify-center bg-slate-900/30 p-2 overflow-auto">
           <div id="preview-wrapper" class="w-full h-full bg-white rounded-xl shadow-2xl overflow-hidden transition-all duration-300">
-            <iframe id="preview-iframe" src="output/generated.html" class="w-full h-full border-none" title="Live Preview"></iframe>
+            <iframe id="preview-iframe" src="output/generated.html" class="w-full h-full border-none" title="Live Sandboxed Preview" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
           </div>
         </div>
 
-        <!-- TAB 2: Generated Code View -->
+        <!-- TAB 2: Generated Code View (Monaco Editor Integration) -->
         <div id="content-code" class="studio-content hidden w-full h-full flex flex-col bg-slate-950 p-4 overflow-hidden">
-          <div class="flex items-center justify-between pb-2 text-xs text-slate-400 border-b border-slate-800">
-            <span class="font-mono">synthesized_template.html (Tailwind CSS Ready)</span>
-            <span class="text-indigo-400">100% AST Validated • Semantic HTML5</span>
+          <div class="flex items-center justify-between pb-3 text-xs text-slate-400 border-b border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-white font-semibold">synthesized_template.html</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Monaco HTML Editor</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">DOMPurify Active</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="syncEditorToPreview()" class="px-2.5 py-1 rounded bg-indigo-600/80 hover:bg-indigo-600 text-white font-medium text-xs transition flex items-center gap-1">
+                <span>⚡</span> Sync to Preview
+              </button>
+              <button onclick="formatMonacoCode()" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs transition">
+                Format
+              </button>
+            </div>
           </div>
-          <pre class="flex-1 overflow-auto mt-3 p-4 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-slate-300 leading-relaxed font-mono select-all"><code id="code-display">&lt;!-- Synthesized HTML will appear here after conversion --&gt;</code></pre>
+          <div id="monaco-container" class="flex-1 w-full rounded-xl overflow-hidden border border-slate-800 mt-3"></div>
+          <pre id="code-display" class="hidden"></pre>
         </div>
 
         <!-- TAB 3: AST & Self-Correction Engine Diagnostics -->
@@ -441,6 +455,10 @@
       btn.className = "studio-tab active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition flex items-center gap-1.5 shadow-sm";
 
       document.getElementById('viewport-controls').style.display = (tabId === 'preview') ? 'flex' : 'none';
+
+      if (tabId === 'code' && window.monacoEditor) {
+        setTimeout(() => window.monacoEditor.layout(), 50);
+      }
     }
 
     function setViewport(mode) {
@@ -598,15 +616,19 @@
           const archLabel = (data.archetype || 'custom').toUpperCase();
           document.getElementById('detected-count-badge').innerText = `${data.boxes_detected} Contours • ${archLabel}`;
 
-          // 2. Render Live Generated UI in iframe (both srcdoc and src for bulletproof display)
+          // 2. Render Live Generated UI in Sandboxed Iframe (DOMPurify Sanitized)
           const iframe = document.getElementById('preview-iframe');
-          iframe.srcdoc = data.full_html;
+          const safeHtml = (typeof DOMPurify !== 'undefined') ? DOMPurify.sanitize(data.full_html) : data.full_html;
+          iframe.srcdoc = safeHtml;
           if (data.preview_url) {
             iframe.src = data.preview_url;
           }
 
-          // 3. Update Code View
+          // 3. Update Monaco Code View & Fallback Display
           document.getElementById('code-display').innerText = data.full_html;
+          if (window.monacoEditor) {
+            window.monacoEditor.setValue(data.full_html);
+          }
 
           // 4. Update Latency & AST Metrics
           if (document.getElementById('latency-stat')) {
@@ -674,6 +696,47 @@
       a.href = URL.createObjectURL(blob);
       a.download = "sketch_to_code_output.html";
       a.click();
+    }
+    // Monaco Editor Integration (Week 10)
+    let monacoEditor = null;
+    if (typeof require !== 'undefined') {
+      require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+      require(['vs/editor/editor.main'], function () {
+        monacoEditor = monaco.editor.create(document.getElementById('monaco-container'), {
+          value: document.getElementById('code-display').innerText || '<!-- Generated code will appear here -->',
+          language: 'html',
+          theme: 'vs-dark',
+          automaticLayout: true,
+          fontSize: 12,
+          fontFamily: "'JetBrains Mono', monospace",
+          minimap: { enabled: false },
+          scrollBeyondLastLine: false,
+          wordWrap: 'on'
+        });
+        window.monacoEditor = monacoEditor;
+
+        let syncDebounce = null;
+        monacoEditor.onDidChangeModelContent(() => {
+          clearTimeout(syncDebounce);
+          syncDebounce = setTimeout(syncEditorToPreview, 400);
+        });
+      });
+    }
+
+    function syncEditorToPreview() {
+      if (window.monacoEditor) {
+        const rawCode = window.monacoEditor.getValue();
+        document.getElementById('code-display').innerText = rawCode;
+        const cleanCode = (typeof DOMPurify !== 'undefined') ? DOMPurify.sanitize(rawCode) : rawCode;
+        const iframe = document.getElementById('preview-iframe');
+        if (iframe) iframe.srcdoc = cleanCode;
+      }
+    }
+
+    function formatMonacoCode() {
+      if (window.monacoEditor) {
+        window.monacoEditor.getAction('editor.action.formatDocument').run();
+      }
     }
   </script>
 </body>
