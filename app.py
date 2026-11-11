@@ -38,6 +38,7 @@ from src.ast_validator import ASTValidationEngine
 from src.component_prompts import ComponentCodeGenerator, UIComponentCategory
 from src.self_correction import SelfCorrectionEngine
 from src.gpt_client import GPTCodeGenerator
+from src.accessibility import AccessibilityAuditor, AccessibilityEnforcer
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] [%(name)s] %(message)s")
 logger = logging.getLogger("SketchToCodeServer")
@@ -1000,6 +1001,10 @@ class SketchToCodeHandler(http.server.SimpleHTTPRequestHandler):
                 self_corrected = True
                 ast_report = validator.validate_document(full_html)
 
+            # 6. WCAG 2.1 AA Accessibility & Semantic HTML5 Enforcement
+            a11y_enforcer = AccessibilityEnforcer()
+            full_html, a11y_report = a11y_enforcer.enforce_accessibility(full_html)
+
             # Save generated HTML to disk for instant, reliable browser previewing
             gen_path = Path(DIRECTORY) / "output" / "generated.html"
             gen_path.parent.mkdir(parents=True, exist_ok=True)
@@ -1010,7 +1015,7 @@ class SketchToCodeHandler(http.server.SimpleHTTPRequestHandler):
             vis_b64 = "data:image/png;base64," + base64.b64encode(buf).decode("utf-8")
 
             duration = time.time() - start_time
-            logger.info("Successfully synthesized wireframe into %s code in %.3fs (AST Valid: %s)", archetype.upper(), duration, ast_report.is_valid)
+            logger.info("Successfully synthesized wireframe into %s code in %.3fs (AST Valid: %s, WCAG: %.1f)", archetype.upper(), duration, ast_report.is_valid, a11y_report.score)
 
             # Format response
             response_data = {
@@ -1027,6 +1032,8 @@ class SketchToCodeHandler(http.server.SimpleHTTPRequestHandler):
                 "ast_valid": ast_report.is_valid,
                 "ast_errors": ast_report.error_count,
                 "self_corrected": self_corrected,
+                "accessibility_compliant": a11y_report.is_compliant,
+                "accessibility_score": a11y_report.score,
                 "convergence_state": "CONVERGED",
                 "latency_seconds": round(duration, 3)
             }

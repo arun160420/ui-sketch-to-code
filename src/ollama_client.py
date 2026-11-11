@@ -95,7 +95,7 @@ class LLaVAClient:
             f"- Canvas Dimensions: {wireframe_data.get('original_shape', (800, 800))}\n"
             f"- Component Boxes: {json.dumps(components_summary, indent=2)}\n\n"
             "Requirements:\n"
-            "1. Generate modern, accessible HTML5 components and responsive CSS (Flexbox/Grid).\n"
+            "1. Generate modern, accessible HTML5 components conforming to WCAG 2.1 AA (semantic landmarks, alt text, form labels) and responsive CSS (Flexbox/Grid).\n"
             "2. Output MUST be strictly valid JSON without any markdown code fences or conversational text.\n"
             f"3. Include these exact required JSON keys: {schema_props}.\n"
             "4. Each item in 'components' must have: 'component_id', 'component_type', 'bounding_box', 'html', 'css_classes'.\n"

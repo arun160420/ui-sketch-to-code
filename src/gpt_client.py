@@ -86,7 +86,11 @@ class GPTCodeGenerator:
         system_content = (
             "You are an expert Frontend Web Developer and UI Engineer. "
             "Your task is to analyze wireframe bounding boxes and geometric UI component metadata "
-            "and generate clean, modern, accessible HTML5 and responsive CSS code. "
+            "and generate clean, modern, accessible HTML5 and responsive CSS code adhering to WCAG 2.1 AA standards. "
+            "Prioritize semantic HTML5 markup (<header>, <nav>, <main>, <section>, <article>, <aside>, <footer>) "
+            "over generic <div> elements. Ensure all form controls have associated <label for='...'> tags, "
+            "all images have descriptive alt attributes, buttons specify type='button' or type='submit', "
+            "and headings follow a logical hierarchy (h1 -> h2 -> h3). "
             "You MUST strictly adhere to the enforced JSON schema. "
             "Return valid JSON adhering to the specified schema format."
         )

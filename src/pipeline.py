@@ -26,6 +26,7 @@ from src.self_correction import (
     ConvergenceState,
     SelfCorrectionPromptEngine
 )
+from src.accessibility import AccessibilityAuditor, AccessibilityEnforcer, AccessibilityReport
 
 logger = logging.getLogger("SketchToCodePipeline")
 if not logger.handlers:
@@ -54,6 +55,9 @@ class PipelineResult:
     total_cycles: int
     final_error_count: int
     total_execution_time_seconds: float
+    accessibility_compliant: bool = True
+    accessibility_score: float = 100.0
+    accessibility_report: Optional[Dict[str, Any]] = None
     telemetry: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -63,7 +67,8 @@ class PipelineResult:
 class SketchToCodePipeline:
     """
     Master pipeline unifying wireframe preprocessing, multimodal code generation,
-    AST structural validation, and self-correcting agentic refinement loops.
+    AST structural validation, self-correcting agentic refinement loops,
+    and WCAG 2.1 AA accessibility & semantic HTML5 enforcement.
     """
 
     def __init__(
@@ -72,12 +77,16 @@ class SketchToCodePipeline:
         preprocessor: Optional[WireframePreprocessor] = None,
         validator: Optional[ASTValidationEngine] = None,
         self_corrector: Optional[SelfCorrectionEngine] = None,
-        strategy: Optional[RoutingStrategy] = None
+        strategy: Optional[RoutingStrategy] = None,
+        accessibility_auditor: Optional[AccessibilityAuditor] = None,
+        accessibility_enforcer: Optional[AccessibilityEnforcer] = None
     ):
         self.router = router or ModelRouter(strategy=strategy or RoutingStrategy.AUTO)
         self.preprocessor = preprocessor or WireframePreprocessor()
         self.validator = validator or ASTValidationEngine()
         self.self_corrector = self_corrector or SelfCorrectionEngine(validator_engine=self.validator)
+        self.accessibility_auditor = accessibility_auditor or AccessibilityAuditor()
+        self.accessibility_enforcer = accessibility_enforcer or AccessibilityEnforcer(auditor=self.accessibility_auditor)
 
     def process(
         self,
@@ -141,10 +150,16 @@ class SketchToCodePipeline:
         else:
             logger.info("Generated code passed AST validation on initial attempt. Bypassing refinement loop.")
 
+        # Step 5: WCAG 2.1 AA Accessibility & Semantic HTML5 Enforcement
+        logger.info("Enforcing WCAG 2.1 AA accessibility and semantic HTML5 standards...")
+        current_html = payload.get("full_html", "")
+        remediated_html, a11y_report = self.accessibility_enforcer.enforce_accessibility(current_html)
+        payload["full_html"] = remediated_html
+
         total_duration = time.time() - pipeline_start
 
         return PipelineResult(
-            success=(final_error_count == 0),
+            success=(final_error_count == 0 and a11y_report.is_compliant),
             page_title=payload.get("page_title", "Generated UI Prototype"),
             layout_type=payload.get("layout_type", "flexbox"),
             components=payload.get("components", []),
@@ -159,8 +174,12 @@ class SketchToCodePipeline:
             total_cycles=total_cycles,
             final_error_count=final_error_count,
             total_execution_time_seconds=round(total_duration, 4),
+            accessibility_compliant=a11y_report.is_compliant,
+            accessibility_score=a11y_report.score,
+            accessibility_report=a11y_report.to_dict(),
             telemetry={
                 "generation_metadata": metadata,
-                "correction_metrics": correction_metrics
+                "correction_metrics": correction_metrics,
+                "accessibility_audit": a11y_report.to_dict()
             }
         )

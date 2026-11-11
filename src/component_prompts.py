@@ -63,12 +63,13 @@ PROMPT_TEMPLATES: Dict[str, Dict[str, Any]] = {
         "name": "Login/Signup Form",
         "description": "High-converting, accessible authentication form with input validation styles and social login.",
         "requirements": [
-            "Use semantic <form> container with max-w-md w-full mx-auto p-8 bg-white rounded-2xl shadow-xl border border-gray-100.",
+            "Use semantic <form> container with max-w-md w-full mx-auto p-8 bg-white rounded-2xl shadow-xl border border-gray-100 (WCAG 1.3.1).",
             "Header with title (text-2xl font-bold text-gray-900) and subtitle with switch link.",
-            "Email and password fields using styled labels and floating focus rings.",
+            "Email and password fields using styled labels with explicit for/id matching (WCAG 1.3.1).",
+            "Specify autocomplete='email' and autocomplete='current-password' for input purpose identification (WCAG 1.3.5).",
             "Password field with show/hide toggle affordance.",
             "Remember me checkbox and 'Forgot password?' anchor link aligned horizontally.",
-            "Full-width submit button (w-full py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700).",
+            "Full-width submit button with explicit type='submit' (WCAG 4.1.2).",
             "Alternative social login divider ('or continue with')."
         ],
         "default_html": (
@@ -80,7 +81,7 @@ PROMPT_TEMPLATES: Dict[str, Dict[str, Any]] = {
             '  <form class="space-y-4" action="#" method="POST">\n'
             '    <div>\n'
             '      <label for="auth-email" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Email Address</label>\n'
-            '      <input type="email" id="auth-email" required placeholder="you@company.com" '
+            '      <input type="email" id="auth-email" name="email" required autocomplete="email" placeholder="you@company.com" '
             'class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition" />\n'
             '    </div>\n'
             '    <div>\n'
@@ -88,14 +89,14 @@ PROMPT_TEMPLATES: Dict[str, Dict[str, Any]] = {
             '        <label for="auth-password" class="text-xs font-semibold uppercase tracking-wider text-gray-700">Password</label>\n'
             '        <a href="#forgot" class="text-xs font-medium text-indigo-600 hover:text-indigo-500">Forgot password?</a>\n'
             '      </div>\n'
-            '      <input type="password" id="auth-password" required placeholder="••••••••" '
+            '      <input type="password" id="auth-password" name="password" required autocomplete="current-password" placeholder="••••••••" '
             'class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition" />\n'
             '    </div>\n'
             '    <div class="flex items-center">\n'
-            '      <input type="checkbox" id="remember" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />\n'
+            '      <input type="checkbox" id="remember" name="remember" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />\n'
             '      <label for="remember" class="ml-2 text-xs text-gray-600">Remember me for 30 days</label>\n'
             '    </div>\n'
-            '    <button type="submit" class="w-full py-3 px-4 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md hover:shadow-lg transition-all">Sign In</button>\n'
+            '    <button type="submit" class="w-full py-3 px-4 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500">Sign In</button>\n'
             '  </form>\n'
             '  <p class="text-center text-xs text-gray-500 mt-6">Don\'t have an account? <a href="#signup" class="text-indigo-600 font-semibold hover:underline">Sign up</a></p>\n'
             '</div>'
@@ -229,12 +230,13 @@ class ComponentCodeGenerator:
         reqs = "\n".join([f"- {r}" for r in spec["requirements"]])
 
         prompt = (
-            f"You are an expert UI/UX Engineer specialized in Tailwind CSS.\n"
-            f"Generate a deterministic, production-grade {spec['name']} component.\n\n"
+            f"You are an expert UI/UX Engineer specialized in Tailwind CSS and WCAG 2.1 AA accessibility.\n"
+            f"Generate a deterministic, production-grade {spec['name']} component using semantic HTML5 markup.\n\n"
             f"Component Requirements:\n{reqs}\n\n"
             f"Bounding Box Coordinates: {bounding_box or [0.0, 0.0, 1.0, 0.2]}\n"
             f"Context: {json.dumps(context or {})}\n\n"
-            "Generate clean, modern semantic HTML5 and valid Tailwind CSS utility classes. "
+            "Generate clean, modern semantic HTML5 (<header>, <nav>, <main>, <section>, <article>, <aside>, <footer>) "
+            "and valid Tailwind CSS utility classes. Ensure full WCAG 2.1 AA compliance (alt text, explicit labels, button types). "
             "Output MUST be strictly valid JSON matching the UI schema."
         )
         return prompt
