@@ -835,6 +835,28 @@ class SketchToCodeHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
+    def do_GET(self):
+        """Serve static files or handle API status queries."""
+        if self.path == "/api/health":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            health_status = {
+                "status": "healthy",
+                "service": "SketchToCode AI Studio",
+                "version": "1.0.0",
+                "timestamp": int(time.time()),
+                "uptime_milestones": [
+                    "preprocessing", "multimodal_routing", "ast_validation",
+                    "self_correction", "wcag_accessibility", "dompurify_security",
+                    "performance_optimization", "e2e_testing"
+                ]
+            }
+            self.wfile.write(json.dumps(health_status).encode("utf-8"))
+            return
+        super().do_GET()
+
     def do_POST(self):
         """Handle API requests."""
         if self.path == "/api/synthesize":
