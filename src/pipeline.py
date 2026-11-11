@@ -102,7 +102,7 @@ class SketchToCodePipeline:
             detected_box_count = len(wireframe_data.get("normalized_boxes", []))
         else:
             logger.info("Executing OpenCV wireframe preprocessing...")
-            wireframe_data = self.preprocessor.process_pipeline(input_source)
+            wireframe_data = self.preprocessor.process(input_source)
             detected_box_count = wireframe_data.get("total_components", 0)
 
         # Step 2: Vision Model Code Generation via ModelRouter
