@@ -154,6 +154,7 @@ class ASTValidationEngine:
             self.bridge_script = Path(bridge_script_path).resolve()
         else:
             self.bridge_script = project_root / "scripts" / "validate_html_ast.js"
+        self._cache: Dict[str, ValidationReport] = {}
 
         logger.debug(
             f"Initialized ASTValidationEngine with bridge: {self.bridge_script}, config: {self.config_path}"
@@ -295,6 +296,19 @@ class ASTValidationEngine:
             raw_response=data
         )
 
+    def validate(self, html_content: str, is_snippet: Optional[bool] = None) -> ValidationReport:
+        """
+        Unified validation dispatcher for snippets or full documents.
+        Automatically detects whether input is a full document or component snippet.
+        """
+        if is_snippet is None:
+            lower = html_content.lower() if html_content else ""
+            is_snippet = not ("<!doctype" in lower or "<html" in lower or "<body" in lower)
+        
+        if is_snippet:
+            return self.validate_snippet(html_content)
+        return self.validate_document(html_content)
+
     def validate_snippet(self, html_snippet: str) -> ValidationReport:
         """
         Validates an isolated HTML snippet (e.g., component navbar, button, form).
@@ -315,8 +329,13 @@ class ASTValidationEngine:
                 source_snippet=html_snippet
             )
 
+        cache_key = f"snippet:{hash(html_snippet)}"
+        if cache_key in self._cache:
+            return self._cache[cache_key]
+
         data = self._execute_runner(html_snippet, is_snippet=True)
         report = self._parse_report(data, source=html_snippet)
+        self._cache[cache_key] = report
         logger.info(
             f"Snippet Validation: {'PASSED' if report.is_valid else 'FAILED'} "
             f"({report.error_count} errors, {report.warning_count} warnings)"
@@ -342,8 +361,13 @@ class ASTValidationEngine:
                 source_snippet=full_html
             )
 
+        cache_key = f"doc:{hash(full_html)}"
+        if cache_key in self._cache:
+            return self._cache[cache_key]
+
         data = self._execute_runner(full_html, is_snippet=False)
         report = self._parse_report(data, source=full_html)
+        self._cache[cache_key] = report
         logger.info(
             f"Document Validation: {'PASSED' if report.is_valid else 'FAILED'} "
             f"({report.error_count} errors, {report.warning_count} warnings)"

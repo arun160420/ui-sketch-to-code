@@ -186,12 +186,22 @@ class SecuritySanitizer:
     with a robust pure-Python defense-in-depth fallback.
     """
 
+    SUSPICIOUS_PATTERN = re.compile(
+        r"<\s*(?:script|object|embed|applet|iframe)\b"
+        r"|\bon\w+\s*="
+        r"|javascript:"
+        r"|vbscript:"
+        r"|data:\s*text/html",
+        re.IGNORECASE
+    )
+
     def __init__(self, bridge_script: Optional[Path] = None, enable_node_dompurify: bool = True):
         self.bridge_script = bridge_script or (
             Path(__file__).resolve().parent.parent / "scripts" / "sanitize_html.js"
         )
         self.enable_node_dompurify = enable_node_dompurify
         self.policy = SandboxedIframePolicy()
+        self._cache: Dict[str, SanitizationReport] = {}
 
     def sanitize(self, raw_html: str) -> SanitizationReport:
         if not raw_html or not raw_html.strip():
@@ -204,11 +214,19 @@ class SecuritySanitizer:
                 sanitizer_used="DOMPurify"
             )
 
-        had_doctype = bool(re.search(r"<!DOCTYPE\s+html", raw_html, re.IGNORECASE))
+        content_key = str(hash(raw_html))
+        if content_key in self._cache:
+            return self._cache[content_key]
 
-        # 1. Attempt Node.js DOMPurify execution
+        had_doctype = bool(re.search(r"<!DOCTYPE\s+html", raw_html, re.IGNORECASE))
+        is_suspicious = bool(self.SUSPICIOUS_PATTERN.search(raw_html))
+
         report = None
-        if self.enable_node_dompurify and self.bridge_script.exists():
+        # Fast path: If markup contains zero executable or suspicious constructs, use fast-path sanitizer
+        if not is_suspicious:
+            report = self._pure_python_sanitize(raw_html)
+        elif self.enable_node_dompurify and self.bridge_script.exists():
+            # 1. Attempt Node.js DOMPurify execution for suspicious inputs
             try:
                 report = self._run_node_dompurify(raw_html)
             except Exception as e:
@@ -221,6 +239,7 @@ class SecuritySanitizer:
         if had_doctype and not re.search(r"<!DOCTYPE\s+html", report.clean_html, re.IGNORECASE):
             report.clean_html = f"<!DOCTYPE html>\n{report.clean_html}"
 
+        self._cache[content_key] = report
         return report
 
     def _run_node_dompurify(self, raw_html: str) -> Optional[SanitizationReport]:
