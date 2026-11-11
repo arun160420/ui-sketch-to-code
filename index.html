@@ -618,10 +618,22 @@
 
           // 2. Render Live Generated UI in Sandboxed Iframe (DOMPurify Sanitized)
           const iframe = document.getElementById('preview-iframe');
-          const safeHtml = (typeof DOMPurify !== 'undefined') ? DOMPurify.sanitize(data.full_html) : data.full_html;
-          iframe.srcdoc = safeHtml;
           if (data.preview_url) {
+            iframe.removeAttribute('srcdoc');
             iframe.src = data.preview_url;
+          } else {
+            let safeHtml = (typeof DOMPurify !== 'undefined')
+              ? DOMPurify.sanitize(data.full_html, {
+                  WHOLE_DOCUMENT: true,
+                  ADD_TAGS: ['script', 'style', 'link', 'meta', 'title'],
+                  ADD_ATTR: ['target', 'role', 'aria-label', 'aria-labelledby', 'aria-describedby', 'aria-hidden', 'aria-required', 'rel', 'href', 'crossorigin', 'name', 'content', 'charset', 'src', 'class']
+                })
+              : data.full_html;
+
+            if (data.full_html.includes('https://cdn.tailwindcss.com') && !safeHtml.includes('https://cdn.tailwindcss.com')) {
+              safeHtml = safeHtml.replace('</head>', '<script src="https://cdn.tailwindcss.com"></script></head>');
+            }
+            iframe.srcdoc = safeHtml;
           }
 
           // 3. Update Monaco Code View & Fallback Display
@@ -727,7 +739,16 @@
       if (window.monacoEditor) {
         const rawCode = window.monacoEditor.getValue();
         document.getElementById('code-display').innerText = rawCode;
-        const cleanCode = (typeof DOMPurify !== 'undefined') ? DOMPurify.sanitize(rawCode) : rawCode;
+        let cleanCode = (typeof DOMPurify !== 'undefined')
+          ? DOMPurify.sanitize(rawCode, {
+              WHOLE_DOCUMENT: true,
+              ADD_TAGS: ['script', 'style', 'link', 'meta', 'title'],
+              ADD_ATTR: ['target', 'role', 'aria-label', 'aria-labelledby', 'aria-describedby', 'aria-hidden', 'aria-required', 'rel', 'href', 'crossorigin', 'name', 'content', 'charset', 'src', 'class']
+            })
+          : rawCode;
+        if (rawCode.includes('https://cdn.tailwindcss.com') && !cleanCode.includes('https://cdn.tailwindcss.com')) {
+          cleanCode = cleanCode.replace('</head>', '<script src="https://cdn.tailwindcss.com"></script></head>');
+        }
         const iframe = document.getElementById('preview-iframe');
         if (iframe) iframe.srcdoc = cleanCode;
       }

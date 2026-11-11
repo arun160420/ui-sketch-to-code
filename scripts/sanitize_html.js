@@ -34,8 +34,8 @@ const PURIFY_CONFIG = {
     'onsubmit', 'onreset', 'onchange', 'formaction'
   ],
   ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
-  ADD_TAGS: ['nav', 'header', 'main', 'section', 'article', 'aside', 'footer', 'figure', 'figcaption'],
-  ADD_ATTR: ['target', 'role', 'aria-label', 'aria-labelledby', 'aria-describedby', 'aria-hidden', 'aria-required']
+  ADD_TAGS: ['nav', 'header', 'main', 'section', 'article', 'aside', 'footer', 'figure', 'figcaption', 'style', 'link', 'meta', 'title'],
+  ADD_ATTR: ['target', 'role', 'aria-label', 'aria-labelledby', 'aria-describedby', 'aria-hidden', 'aria-required', 'rel', 'href', 'crossorigin', 'name', 'content', 'charset']
 };
 
 function sanitizeHTML(rawHtml, options = {}) {
@@ -46,6 +46,10 @@ function sanitizeHTML(rawHtml, options = {}) {
   // Track what DOMPurify removes using hooks
   DOMPurify.addHook('beforeSanitizeElements', (node) => {
     if (node.tagName && config.FORBID_TAGS.includes(node.tagName.toLowerCase())) {
+      // Do not count trusted Tailwind CDN script as a malicious threat
+      if (node.tagName.toLowerCase() === 'script' && node.src && node.src.includes('cdn.tailwindcss.com')) {
+        return;
+      }
       strippedTags.push(node.tagName.toLowerCase());
     }
   });
@@ -62,8 +66,17 @@ function sanitizeHTML(rawHtml, options = {}) {
     }
   });
 
-  const clean = DOMPurify.sanitize(rawHtml, config);
+  let clean = DOMPurify.sanitize(rawHtml, config);
   DOMPurify.removeAllHooks();
+
+  // Ensure trusted Tailwind CSS runtime & fonts are preserved for safe previewing
+  if (rawHtml.includes('https://cdn.tailwindcss.com') && !clean.includes('https://cdn.tailwindcss.com')) {
+    if (clean.includes('</head>')) {
+      clean = clean.replace('</head>', '  <script src="https://cdn.tailwindcss.com"></script>\n</head>');
+    } else if (clean.includes('<body')) {
+      clean = clean.replace('<body', '<script src="https://cdn.tailwindcss.com"></script>\n<body');
+    }
+  }
 
   return {
     clean_html: clean,

@@ -187,7 +187,8 @@ class SecuritySanitizer:
     """
 
     SUSPICIOUS_PATTERN = re.compile(
-        r"<\s*(?:script|object|embed|applet|iframe)\b"
+        r"<\s*script(?![^>]*src=[\"']https://cdn\.tailwindcss\.com[\"'])"
+        r"|<\s*(?:object|embed|applet|iframe)\b"
         r"|\bon\w+\s*="
         r"|javascript:"
         r"|vbscript:"
@@ -238,6 +239,17 @@ class SecuritySanitizer:
 
         if had_doctype and not re.search(r"<!DOCTYPE\s+html", report.clean_html, re.IGNORECASE):
             report.clean_html = f"<!DOCTYPE html>\n{report.clean_html}"
+
+        # Preserve trusted Tailwind CSS runtime & fonts for valid presentation rendering
+        if "https://cdn.tailwindcss.com" in raw_html and "https://cdn.tailwindcss.com" not in report.clean_html:
+            if "</head>" in report.clean_html:
+                report.clean_html = report.clean_html.replace(
+                    "</head>", "  <script src=\"https://cdn.tailwindcss.com\"></script>\n</head>"
+                )
+            elif "<body" in report.clean_html:
+                report.clean_html = report.clean_html.replace(
+                    "<body", "<script src=\"https://cdn.tailwindcss.com\"></script>\n<body"
+                )
 
         self._cache[content_key] = report
         return report
@@ -292,8 +304,11 @@ class SecuritySanitizer:
         clean = raw_html
         threats: List[DetectedThreat] = []
 
-        # 1. Strip <script>...</script>
-        script_pattern = re.compile(r"<script\b[^>]*>.*?</script>", re.IGNORECASE | re.DOTALL)
+        # 1. Strip untrusted <script>...</script> (preserves trusted Tailwind CDN)
+        script_pattern = re.compile(
+            r"<script\b(?![^>]*src=[\"']https://cdn\.tailwindcss\.com[\"'])[^>]*>.*?</script>",
+            re.IGNORECASE | re.DOTALL
+        )
         for m in script_pattern.finditer(clean):
             threats.append(DetectedThreat(
                 threat_type="forbidden_tag",
