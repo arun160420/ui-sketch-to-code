@@ -297,7 +297,7 @@ class ComponentCodeGenerator:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Week 5: Deterministic UI Components Showcase</title>
+  <title>SketchUI — Synthesized from Wireframe</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -317,32 +317,24 @@ class ComponentCodeGenerator:
     <!-- 2. Hero Section Component -->
     {hero_html}
 
-    <!-- Component Gallery Grid -->
+    <!-- Features & Auth Section -->
     <section class="border-t border-slate-200 pt-12">
-      <div class="text-center mb-10">
-        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Deterministic Component Gallery</h2>
-        <p class="text-sm text-slate-500 mt-1">Previewing Cards, Form Inputs, and Authentication Forms styled with Tailwind CSS</p>
-      </div>
-
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
         
-        <!-- Column 1: Content Card & Input Field -->
+        <!-- Features & Inputs -->
         <div class="space-y-8 flex flex-col items-center lg:items-end">
           <div class="w-full max-w-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Component #4: Content Card</span>
             {card_html}
           </div>
 
           <div class="w-full max-w-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Component #5: Form Input Field</span>
             {input_html}
           </div>
         </div>
 
-        <!-- Column 2: Login/Signup Form -->
+        <!-- Authentication -->
         <div class="flex flex-col items-center lg:items-start">
           <div class="w-full max-w-md">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Component #2: Authentication Form</span>
             {form_html}
           </div>
         </div>
@@ -354,7 +346,7 @@ class ComponentCodeGenerator:
 
   <!-- Footer -->
   <footer class="bg-white border-t border-slate-200 py-6 mt-16 text-center text-xs text-slate-400">
-    <p>UI Sketch-to-Code Converter &bull; COM71123-7 Week 5 Milestone &bull; MIET Autonomous</p>
+    <p>&copy; 2026 SketchUI &bull; Production Frontend Synthesized from Wireframe</p>
   </footer>
 
 </body>

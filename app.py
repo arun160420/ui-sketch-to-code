@@ -154,6 +154,11 @@ class SketchToCodeHandler(http.server.SimpleHTTPRequestHandler):
                 self_corrected = True
                 ast_report = validator.validate_document(full_html)
 
+            # Save generated HTML to disk for instant, reliable browser previewing
+            gen_path = Path(DIRECTORY) / "output" / "generated.html"
+            gen_path.parent.mkdir(parents=True, exist_ok=True)
+            gen_path.write_text(full_html, encoding="utf-8")
+
             duration = time.time() - start_time
             logger.info("Successfully synthesized wireframe into code in %.3fs (AST Valid: %s)", duration, ast_report.is_valid)
 
@@ -164,6 +169,7 @@ class SketchToCodeHandler(http.server.SimpleHTTPRequestHandler):
                 "components_synthesized": len(components),
                 "components": components,
                 "full_html": full_html,
+                "preview_url": f"/output/generated.html?t={int(time.time() * 1000)}",
                 "visualization_image": vis_b64,
                 "ast_valid": ast_report.is_valid,
                 "ast_errors": ast_report.error_count,

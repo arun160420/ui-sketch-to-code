@@ -533,7 +533,11 @@
 
           // 2. Render Live Generated UI in iframe
           const iframe = document.getElementById('preview-iframe');
-          iframe.srcdoc = data.full_html;
+          if (data.preview_url) {
+            iframe.src = data.preview_url;
+          } else {
+            iframe.srcdoc = data.full_html;
+          }
 
           // 3. Update Code View
           document.getElementById('code-display').innerText = data.full_html;
