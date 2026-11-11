@@ -39,6 +39,7 @@ from src.component_prompts import ComponentCodeGenerator, UIComponentCategory
 from src.self_correction import SelfCorrectionEngine
 from src.gpt_client import GPTCodeGenerator
 from src.accessibility import AccessibilityAuditor, AccessibilityEnforcer
+from src.security import SecuritySanitizer, SandboxedIframePolicy
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] [%(name)s] %(message)s")
 logger = logging.getLogger("SketchToCodeServer")
@@ -1005,6 +1006,11 @@ class SketchToCodeHandler(http.server.SimpleHTTPRequestHandler):
             a11y_enforcer = AccessibilityEnforcer()
             full_html, a11y_report = a11y_enforcer.enforce_accessibility(full_html)
 
+            # 7. DOMPurify Security Sanitization & Sandboxed Preview
+            sec_sanitizer = SecuritySanitizer()
+            sec_report = sec_sanitizer.sanitize(full_html)
+            full_html = sec_report.clean_html
+
             # Save generated HTML to disk for instant, reliable browser previewing
             gen_path = Path(DIRECTORY) / "output" / "generated.html"
             gen_path.parent.mkdir(parents=True, exist_ok=True)
@@ -1015,7 +1021,7 @@ class SketchToCodeHandler(http.server.SimpleHTTPRequestHandler):
             vis_b64 = "data:image/png;base64," + base64.b64encode(buf).decode("utf-8")
 
             duration = time.time() - start_time
-            logger.info("Successfully synthesized wireframe into %s code in %.3fs (AST Valid: %s, WCAG: %.1f)", archetype.upper(), duration, ast_report.is_valid, a11y_report.score)
+            logger.info("Successfully synthesized wireframe into %s code in %.3fs (AST Valid: %s, WCAG: %.1f, Threats Defanged: %d)", archetype.upper(), duration, ast_report.is_valid, a11y_report.score, sec_report.threats_detected)
 
             # Format response
             response_data = {
@@ -1034,6 +1040,9 @@ class SketchToCodeHandler(http.server.SimpleHTTPRequestHandler):
                 "self_corrected": self_corrected,
                 "accessibility_compliant": a11y_report.is_compliant,
                 "accessibility_score": a11y_report.score,
+                "security_sanitized": sec_report.is_secure,
+                "threats_defanged": sec_report.threats_detected,
+                "sandbox_policy": sec_report.sandbox_policy,
                 "convergence_state": "CONVERGED",
                 "latency_seconds": round(duration, 3)
             }

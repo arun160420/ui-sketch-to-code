@@ -27,6 +27,7 @@ from src.self_correction import (
     SelfCorrectionPromptEngine
 )
 from src.accessibility import AccessibilityAuditor, AccessibilityEnforcer, AccessibilityReport
+from src.security import SecuritySanitizer, SanitizationReport
 
 logger = logging.getLogger("SketchToCodePipeline")
 if not logger.handlers:
@@ -58,6 +59,8 @@ class PipelineResult:
     accessibility_compliant: bool = True
     accessibility_score: float = 100.0
     accessibility_report: Optional[Dict[str, Any]] = None
+    security_sanitized: bool = True
+    security_report: Optional[Dict[str, Any]] = None
     telemetry: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -68,7 +71,7 @@ class SketchToCodePipeline:
     """
     Master pipeline unifying wireframe preprocessing, multimodal code generation,
     AST structural validation, self-correcting agentic refinement loops,
-    and WCAG 2.1 AA accessibility & semantic HTML5 enforcement.
+    WCAG 2.1 AA accessibility enforcement, and DOMPurify security sanitization.
     """
 
     def __init__(
@@ -79,7 +82,8 @@ class SketchToCodePipeline:
         self_corrector: Optional[SelfCorrectionEngine] = None,
         strategy: Optional[RoutingStrategy] = None,
         accessibility_auditor: Optional[AccessibilityAuditor] = None,
-        accessibility_enforcer: Optional[AccessibilityEnforcer] = None
+        accessibility_enforcer: Optional[AccessibilityEnforcer] = None,
+        security_sanitizer: Optional[SecuritySanitizer] = None
     ):
         self.router = router or ModelRouter(strategy=strategy or RoutingStrategy.AUTO)
         self.preprocessor = preprocessor or WireframePreprocessor()
@@ -87,6 +91,7 @@ class SketchToCodePipeline:
         self.self_corrector = self_corrector or SelfCorrectionEngine(validator_engine=self.validator)
         self.accessibility_auditor = accessibility_auditor or AccessibilityAuditor()
         self.accessibility_enforcer = accessibility_enforcer or AccessibilityEnforcer(auditor=self.accessibility_auditor)
+        self.security_sanitizer = security_sanitizer or SecuritySanitizer()
 
     def process(
         self,
@@ -156,10 +161,15 @@ class SketchToCodePipeline:
         remediated_html, a11y_report = self.accessibility_enforcer.enforce_accessibility(current_html)
         payload["full_html"] = remediated_html
 
+        # Step 6: DOMPurify Security Sanitization (XSS Defenses & Sandboxing)
+        logger.info("Applying DOMPurify security sanitization and XSS neutralization...")
+        sec_report = self.security_sanitizer.sanitize(remediated_html)
+        payload["full_html"] = sec_report.clean_html
+
         total_duration = time.time() - pipeline_start
 
         return PipelineResult(
-            success=(final_error_count == 0 and a11y_report.is_compliant),
+            success=(final_error_count == 0 and a11y_report.is_compliant and sec_report.is_secure),
             page_title=payload.get("page_title", "Generated UI Prototype"),
             layout_type=payload.get("layout_type", "flexbox"),
             components=payload.get("components", []),
@@ -177,9 +187,12 @@ class SketchToCodePipeline:
             accessibility_compliant=a11y_report.is_compliant,
             accessibility_score=a11y_report.score,
             accessibility_report=a11y_report.to_dict(),
+            security_sanitized=sec_report.is_secure,
+            security_report=sec_report.to_dict(),
             telemetry={
                 "generation_metadata": metadata,
                 "correction_metrics": correction_metrics,
-                "accessibility_audit": a11y_report.to_dict()
+                "accessibility_audit": a11y_report.to_dict(),
+                "security_sanitization": sec_report.to_dict()
             }
         )
