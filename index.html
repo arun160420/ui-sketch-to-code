@@ -529,7 +529,8 @@
           if (data.visualization_image) {
             document.getElementById('sketch-image').src = data.visualization_image;
           }
-          document.getElementById('detected-count-badge').innerText = `${data.boxes_detected} Contours Detected`;
+          const archLabel = (data.archetype || 'custom').toUpperCase();
+          document.getElementById('detected-count-badge').innerText = `${data.boxes_detected} Contours • Archetype: ${archLabel}`;
 
           // 2. Render Live Generated UI in iframe
           const iframe = document.getElementById('preview-iframe');
