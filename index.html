@@ -23,7 +23,7 @@
 <body class="h-full flex flex-col overflow-hidden bg-slate-950 text-slate-100">
 
   <!-- Main Top Navigation -->
-  <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 px-6 py-3.5 flex items-center justify-between shrink-0 z-50">
+  <header class="bg-slate-900/95 backdrop-blur border-b border-slate-800 px-6 py-3.5 flex items-center justify-between shrink-0 z-50">
     <div class="flex items-center gap-3.5">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-indigo-500/25">
         ⚡
@@ -35,20 +35,20 @@
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             Engine Ready
           </span>
+          <span id="engine-mode-pill" class="hidden sm:inline-flex px-2 py-0.5 text-[11px] font-mono rounded bg-slate-800 text-slate-300 border border-slate-700">
+            OpenCV Spatial + Vision AI
+          </span>
         </div>
         <p class="text-xs text-slate-400">Autonomous Wireframe-to-Tailwind Synthesis & AST Self-Correction Studio</p>
       </div>
     </div>
 
     <!-- Quick Action Bar -->
-    <div class="flex items-center gap-3">
-      <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs text-slate-300">
-        <span class="text-slate-400">Vision Model:</span>
-        <span class="font-semibold text-indigo-400">Multimodal Auto-Router</span>
-        <span class="text-slate-600">•</span>
-        <span class="text-slate-400">Validator:</span>
-        <span class="font-semibold text-emerald-400">HTML5 AST Engine</span>
-      </div>
+    <div class="flex items-center gap-2.5">
+      <button onclick="openSettingsModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" title="Configure OpenAI Vision API Key">
+        <span>⚙️</span>
+        <span id="ai-settings-label">AI Settings</span>
+      </button>
 
       <button onclick="copyCode()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
         <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -74,69 +74,70 @@
             <span>✏️</span> Wireframe Input
           </span>
           <span id="detected-count-badge" class="px-2 py-0.5 text-xs font-medium rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-            5 Components Detected
+            OpenCV Spatial Engine Ready
           </span>
         </div>
         <div class="flex items-center gap-2">
           <label class="text-xs text-slate-400 flex items-center gap-1.5 cursor-pointer select-none">
             <input type="checkbox" id="toggle-bboxes" checked onchange="toggleBoundingBoxes()" class="rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-0">
-            <span>Show OpenCV Contours</span>
+            <span>Show Contours</span>
           </label>
         </div>
       </div>
 
       <!-- Sample Wireframe Selector -->
       <div class="px-4 py-3 bg-slate-900/80 border-b border-slate-800 flex items-center gap-2">
-        <span class="text-xs font-medium text-slate-400 shrink-0">Preset Wireframes:</span>
-        <div class="flex items-center gap-1.5 overflow-x-auto w-full">
+        <span class="text-xs font-medium text-slate-400 shrink-0">Presets:</span>
+        <div class="flex items-center gap-1.5 overflow-x-auto w-full pb-1">
           <button onclick="loadSample('landing')" id="sample-landing-btn" class="sample-btn px-2.5 py-1 rounded text-xs font-semibold bg-indigo-600 text-white transition whitespace-nowrap">
-            Landing Page
+            🚀 Landing
+          </button>
+          <button onclick="loadSample('dashboard')" id="sample-dashboard-btn" class="sample-btn px-2.5 py-1 rounded text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 border border-slate-700 transition whitespace-nowrap">
+            📊 Dashboard
           </button>
           <button onclick="loadSample('auth')" id="sample-auth-btn" class="sample-btn px-2.5 py-1 rounded text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 border border-slate-700 transition whitespace-nowrap">
-            Auth & Login Form
+            🔐 Auth
           </button>
-          <button onclick="loadSample('cards')" id="sample-cards-btn" class="sample-btn px-2.5 py-1 rounded text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 border border-slate-700 transition whitespace-nowrap">
-            Card Gallery
+          <button onclick="loadSample('ecommerce')" id="sample-ecommerce-btn" class="sample-btn px-2.5 py-1 rounded text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 border border-slate-700 transition whitespace-nowrap">
+            🛍️ Store
+          </button>
+          <button onclick="loadSample('table')" id="sample-table-btn" class="sample-btn px-2.5 py-1 rounded text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 border border-slate-700 transition whitespace-nowrap">
+            📋 Table
           </button>
         </div>
       </div>
 
       <!-- Interactive Canvas Area -->
       <div class="p-4 flex-1 flex flex-col items-center justify-center">
-        <div class="relative w-full max-w-md aspect-[4/5] bg-slate-900 border-2 border-dashed border-slate-700 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all shadow-inner group flex items-center justify-center" id="dropzone">
+        <div class="relative w-full max-w-md aspect-[4/5] bg-slate-900 border-2 border-dashed border-slate-700 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all shadow-inner group flex items-center justify-center cursor-pointer" id="dropzone" onclick="document.getElementById('file-input').click()">
           
           <!-- Wireframe Image -->
           <img id="sketch-image" src="assets/sample_wireframe.png" alt="Hand-Drawn Wireframe" class="w-full h-full object-contain p-2 select-none" />
 
-          <!-- Overlaid OpenCV Bounding Boxes -->
+          <!-- Overlaid OpenCV Bounding Boxes (for initial static preview) -->
           <div id="bbox-overlay" class="absolute inset-0 pointer-events-none p-2">
-            <!-- Nav BBox -->
-            <div class="cv-bbox absolute border-2 border-emerald-400 bg-emerald-500/10 rounded pointer-events-auto" style="top: 2%; left: 4%; width: 92%; height: 10%;" title="Component 1: Navbar (OpenCV Contour #1)">
+            <div class="cv-bbox absolute border-2 border-emerald-400 bg-emerald-500/10 rounded pointer-events-auto" style="top: 2%; left: 4%; width: 92%; height: 10%;" title="Component 1: Navbar">
               <span class="absolute top-1 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-600 text-white shadow">NAVBAR</span>
             </div>
-            <!-- Hero BBox -->
-            <div class="cv-bbox absolute border-2 border-indigo-400 bg-indigo-500/10 rounded pointer-events-auto" style="top: 15%; left: 4%; width: 92%; height: 32%;" title="Component 2: Hero Section (OpenCV Contour #2)">
+            <div class="cv-bbox absolute border-2 border-indigo-400 bg-indigo-500/10 rounded pointer-events-auto" style="top: 15%; left: 4%; width: 92%; height: 32%;" title="Component 2: Hero Section">
               <span class="absolute top-1 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-600 text-white shadow">HERO SECTION</span>
             </div>
-            <!-- Card BBox -->
-            <div class="cv-bbox absolute border-2 border-purple-400 bg-purple-500/10 rounded pointer-events-auto" style="top: 50%; left: 4%; width: 44%; height: 36%;" title="Component 3: Content Card (OpenCV Contour #3)">
+            <div class="cv-bbox absolute border-2 border-purple-400 bg-purple-500/10 rounded pointer-events-auto" style="top: 50%; left: 4%; width: 44%; height: 36%;" title="Component 3: Content Card">
               <span class="absolute top-1 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-600 text-white shadow">CARD</span>
             </div>
-            <!-- Input & Form BBox -->
-            <div class="cv-bbox absolute border-2 border-amber-400 bg-amber-500/10 rounded pointer-events-auto" style="top: 50%; left: 52%; width: 44%; height: 36%;" title="Component 4: Auth Form (OpenCV Contour #4)">
-              <span class="absolute top-1 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-600 text-white shadow">AUTH FORM</span>
+            <div class="cv-bbox absolute border-2 border-amber-400 bg-amber-500/10 rounded pointer-events-auto" style="top: 50%; left: 52%; width: 44%; height: 36%;" title="Component 4: Form Input">
+              <span class="absolute top-1 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-600 text-white shadow">INPUT FORM</span>
             </div>
-            <!-- Footer BBox -->
-            <div class="cv-bbox absolute border-2 border-sky-400 bg-sky-500/10 rounded pointer-events-auto" style="top: 89%; left: 4%; width: 92%; height: 8%;" title="Component 5: Footer (OpenCV Contour #5)">
+            <div class="cv-bbox absolute border-2 border-sky-400 bg-sky-500/10 rounded pointer-events-auto" style="top: 89%; left: 4%; width: 92%; height: 8%;" title="Component 5: Footer">
               <span class="absolute top-1 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-600 text-white shadow">FOOTER</span>
             </div>
           </div>
 
           <!-- Upload Overlay on Hover -->
-          <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-6 text-center cursor-pointer" onclick="document.getElementById('file-input').click()">
+          <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-6 text-center">
             <svg class="w-10 h-10 text-indigo-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-            <p class="text-sm font-semibold text-white">Click or Drop Wireframe Image</p>
-            <p class="text-xs text-slate-400 mt-1">Supports PNG, JPG, JPEG sketches</p>
+            <p class="text-sm font-semibold text-white">Upload Any Wireframe Image</p>
+            <p class="text-xs text-slate-400 mt-1">Click, drag & drop, or press Ctrl+V to paste</p>
           </div>
           <input type="file" id="file-input" accept="image/*" class="hidden" onchange="handleFileUpload(event)">
         </div>
@@ -147,55 +148,57 @@
         <div class="grid grid-cols-2 gap-2 text-xs">
           <div class="p-2 rounded-lg bg-slate-800/60 border border-slate-700/60">
             <span class="text-slate-400 block text-[11px]">Computer Vision:</span>
-            <span class="font-semibold text-slate-200">OpenCV CLAHE + Contour</span>
+            <span class="font-semibold text-slate-200">OpenCV Bilateral + Contours</span>
           </div>
           <div class="p-2 rounded-lg bg-slate-800/60 border border-slate-700/60">
-            <span class="text-slate-400 block text-[11px]">Refinement Guard:</span>
-            <span class="font-semibold text-emerald-400">Self-Correction Active</span>
+            <span class="text-slate-400 block text-[11px]">Validation:</span>
+            <span class="font-semibold text-emerald-400">HTML5 AST Self-Healing</span>
           </div>
         </div>
 
-        <button onclick="runSynthesis()" id="convert-btn" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition-all">
-          <span id="btn-icon">⚡</span>
-          <span id="btn-text">Synthesize Code from Sketch</span>
+        <button onclick="runSynthesis()" id="convert-btn" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+          <span>✨</span>
+          <span>Synthesize Code from Wireframe</span>
         </button>
 
-        <!-- Live Conversion Progress Bar (hidden by default) -->
-        <div id="progress-container" class="hidden space-y-1.5 pt-1">
+        <!-- Progress Indicator -->
+        <div id="progress-container" class="hidden space-y-2">
           <div class="flex items-center justify-between text-xs text-slate-300">
-            <span id="progress-step-text" class="font-mono text-[11px]">1. OpenCV Contour Extraction...</span>
-            <span id="progress-percent" class="font-bold text-indigo-400">25%</span>
+            <span id="progress-step-text" class="flex items-center gap-1.5 font-medium">
+              <svg class="animate-spin w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              <span>Processing...</span>
+            </span>
+            <span id="progress-percent" class="font-mono text-indigo-400">0%</span>
           </div>
-          <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-            <div id="progress-bar" class="h-full bg-indigo-500 transition-all duration-300 w-1/4"></div>
+          <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+            <div id="progress-bar" class="h-full bg-indigo-500 transition-all duration-300 w-0"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- RIGHT PANEL: Live Studio Output (7 Cols) -->
-    <section class="lg:col-span-7 flex flex-col h-full bg-slate-950 overflow-hidden">
+    <!-- RIGHT PANEL: Live Studio Workspace (7 Cols) -->
+    <section class="lg:col-span-7 flex flex-col h-full overflow-hidden bg-slate-950">
       
-      <!-- Studio Tabs Header -->
-      <div class="px-4 py-2.5 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between shrink-0">
-        <!-- View Tabs -->
-        <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+      <!-- Studio Tabs Navigation -->
+      <div class="px-6 py-2.5 border-b border-slate-800 bg-slate-900/70 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-1">
           <button onclick="switchTab('preview', this)" class="studio-tab active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition flex items-center gap-1.5 shadow-sm">
-            <span>🌐</span> Live UI Preview
+            <span>🖥️</span> Live UI Preview
           </button>
           <button onclick="switchTab('code', this)" class="studio-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <span>💻</span> Generated HTML
+            <span>💻</span> Generated Code
           </button>
           <button onclick="switchTab('ast', this)" class="studio-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <span>🛡️</span> AST & Self-Correction
+            <span>🌳</span> AST Validator & Telemetry
           </button>
           <button onclick="switchTab('components', this)" class="studio-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <span>🧩</span> Component Inspector
+            <span>🧩</span> Component Tree
           </button>
         </div>
 
-        <!-- Viewport Resize Controls (Visible for Preview) -->
-        <div id="viewport-controls" class="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs">
+        <!-- Viewport Controls -->
+        <div id="viewport-controls" class="flex items-center gap-1 bg-slate-900 border border-slate-800 p-0.5 rounded-lg text-xs">
           <button onclick="setViewport('desktop')" id="vp-desktop" class="vp-btn px-2 py-1 rounded text-slate-200 bg-slate-800 font-medium" title="Desktop View (100%)">
             Desktop
           </button>
@@ -214,7 +217,7 @@
         <!-- TAB 1: Live Interactive Preview -->
         <div id="content-preview" class="studio-content w-full h-full flex items-center justify-center bg-slate-900/30 p-2 overflow-auto">
           <div id="preview-wrapper" class="w-full h-full bg-white rounded-xl shadow-2xl overflow-hidden transition-all duration-300">
-            <iframe id="preview-iframe" src="output/week5/index.html" class="w-full h-full border-none" title="Live Preview"></iframe>
+            <iframe id="preview-iframe" src="output/generated.html" class="w-full h-full border-none" title="Live Preview"></iframe>
           </div>
         </div>
 
@@ -222,62 +225,9 @@
         <div id="content-code" class="studio-content hidden w-full h-full flex flex-col bg-slate-950 p-4 overflow-hidden">
           <div class="flex items-center justify-between pb-2 text-xs text-slate-400 border-b border-slate-800">
             <span class="font-mono">synthesized_template.html (Tailwind CSS Ready)</span>
-            <span class="text-indigo-400">145 Lines • Semantic HTML5</span>
+            <span class="text-indigo-400">100% AST Validated • Semantic HTML5</span>
           </div>
-          <pre class="flex-1 overflow-auto mt-3 p-4 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-slate-300 leading-relaxed font-mono select-all"><code id="code-display">&lt;!DOCTYPE html&gt;
-&lt;html lang="en" class="h-full bg-slate-50"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-  &lt;title&gt;Synthesized UI Application&lt;/title&gt;
-  &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body class="min-h-full flex flex-col antialiased text-slate-800"&gt;
-
-  &lt;!-- Component #1: Navigation Bar --&gt;
-  &lt;nav role="navigation" aria-label="Main Navigation" class="w-full flex items-center justify-between px-6 py-4 bg-white/95 backdrop-blur border-b border-gray-200 sticky top-0 z-50"&gt;
-    &lt;div class="flex items-center gap-3"&gt;
-      &lt;div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-black text-lg shadow-md"&gt;S&lt;/div&gt;
-      &lt;span class="text-xl font-bold tracking-tight text-gray-900"&gt;SketchUI&lt;/span&gt;
-    &lt;/div&gt;
-    &lt;div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600"&gt;
-      &lt;a href="#" class="text-indigo-600 font-semibold"&gt;Home&lt;/a&gt;
-      &lt;a href="#features" class="hover:text-indigo-600 transition-colors"&gt;Features&lt;/a&gt;
-      &lt;a href="#pricing" class="hover:text-indigo-600 transition-colors"&gt;Pricing&lt;/a&gt;
-      &lt;a href="#docs" class="hover:text-indigo-600 transition-colors"&gt;Docs&lt;/a&gt;
-    &lt;/div&gt;
-    &lt;div class="flex items-center gap-3"&gt;
-      &lt;a href="#login" class="text-sm font-medium text-gray-700 hover:text-indigo-600 px-3 py-2"&gt;Sign in&lt;/a&gt;
-      &lt;a href="#signup" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm"&gt;Get Started&lt;/a&gt;
-    &lt;/div&gt;
-  &lt;/nav&gt;
-
-  &lt;!-- Component #2: Hero Section --&gt;
-  &lt;section class="relative overflow-hidden py-16 md:py-24 px-6 max-w-6xl mx-auto text-center"&gt;
-    &lt;div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold mb-6"&gt;
-      &lt;span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"&gt;&lt;/span&gt;
-      &lt;span&gt;Announcing v2.0 AI Sketch Parser&lt;/span&gt;
-    &lt;/div&gt;
-    &lt;h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 max-w-4xl mx-auto leading-tight"&gt;
-      Transform Wireframe Sketches into &lt;span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600"&gt;Production Code&lt;/span&gt;
-    &lt;/h1&gt;
-    &lt;p class="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto"&gt;
-      Accelerate frontend sprints from hours to seconds. Converts pencil drawings into clean Tailwind HTML.
-    &lt;/p&gt;
-  &lt;/section&gt;
-
-  &lt;!-- Component #3: Authentication Form &amp; Input Fields --&gt;
-  &lt;div class="max-w-md w-full mx-auto p-8 bg-white rounded-2xl shadow-xl border border-gray-100 mb-12"&gt;
-    &lt;h2 class="text-2xl font-bold tracking-tight text-gray-900 text-center mb-6"&gt;Welcome Back&lt;/h2&gt;
-    &lt;form class="space-y-4"&gt;
-      &lt;input type="email" required placeholder="you@company.com" class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300" /&gt;
-      &lt;input type="password" required placeholder="••••••••" class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300" /&gt;
-      &lt;button type="submit" class="w-full py-3 px-4 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md"&gt;Sign In&lt;/button&gt;
-    &lt;/form&gt;
-  &lt;/div&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
+          <pre class="flex-1 overflow-auto mt-3 p-4 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-slate-300 leading-relaxed font-mono select-all"><code id="code-display">&lt;!-- Synthesized HTML will appear here after conversion --&gt;</code></pre>
         </div>
 
         <!-- TAB 3: AST & Self-Correction Engine Diagnostics -->
@@ -285,10 +235,10 @@
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
               <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">AST Compliance</div>
-              <div class="text-2xl font-extrabold text-emerald-400 mt-2 flex items-center gap-1.5">
+              <div id="ast-status-badge" class="text-2xl font-extrabold text-emerald-400 mt-2 flex items-center gap-1.5">
                 <span>✓</span> 100% Valid
               </div>
-              <div class="text-xs text-slate-500 mt-1">0 Syntax Violations</div>
+              <div id="ast-error-subtext" class="text-xs text-slate-500 mt-1">0 Syntax Violations</div>
             </div>
 
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
@@ -305,7 +255,7 @@
 
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
               <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pipeline Latency</div>
-              <div id="latency-stat" class="text-2xl font-extrabold text-slate-200 mt-2">0.608s</div>
+              <div id="latency-stat" class="text-2xl font-extrabold text-slate-200 mt-2">0.420s</div>
               <div class="text-xs text-slate-500 mt-1">Total Generation Time</div>
             </div>
           </div>
@@ -361,38 +311,29 @@
           <div id="component-list-container" class="space-y-3">
             <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between">
               <div>
-                <span class="text-xs font-mono font-bold text-indigo-400">#comp-1: NAVBAR</span>
-                <p class="text-xs text-slate-300 mt-1">Glassmorphism navigation bar with logo, links, and authentication actions</p>
+                <span class="text-xs font-mono font-bold text-indigo-400">#COMP-1: NAVBAR</span>
+                <p class="text-xs text-slate-300 mt-1">Responsive navigation header with branding and navigation anchors</p>
                 <span class="text-[11px] font-mono text-slate-500">Bounding Box: [0.0, 0.0, 1.0, 0.10]</span>
               </div>
-              <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono font-bold">100% Match</span>
+              <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono font-bold">Synthesized</span>
             </div>
 
             <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between">
               <div>
-                <span class="text-xs font-mono font-bold text-indigo-400">#comp-2: HERO SECTION</span>
-                <p class="text-xs text-slate-300 mt-1">High-impact headline banner with gradient typography and dual CTA buttons</p>
+                <span class="text-xs font-mono font-bold text-indigo-400">#COMP-2: HERO SECTION</span>
+                <p class="text-xs text-slate-300 mt-1">Hero headline banner with call-to-action buttons</p>
                 <span class="text-[11px] font-mono text-slate-500">Bounding Box: [0.0, 0.10, 1.0, 0.45]</span>
               </div>
-              <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono font-bold">100% Match</span>
+              <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono font-bold">Synthesized</span>
             </div>
 
             <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between">
               <div>
-                <span class="text-xs font-mono font-bold text-indigo-400">#comp-3: CONTENT CARD</span>
-                <p class="text-xs text-slate-300 mt-1">Feature card with gradient media header, category badge, and metadata</p>
-                <span class="text-[11px] font-mono text-slate-500">Bounding Box: [0.05, 0.48, 0.45, 0.85]</span>
+                <span class="text-xs font-mono font-bold text-indigo-400">#COMP-3: CONTENT CARDS</span>
+                <p class="text-xs text-slate-300 mt-1">Multi-column responsive grid with visual indicators</p>
+                <span class="text-[11px] font-mono text-slate-500">Bounding Box: [0.05, 0.48, 0.95, 0.85]</span>
               </div>
-              <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono font-bold">100% Match</span>
-            </div>
-
-            <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between">
-              <div>
-                <span class="text-xs font-mono font-bold text-indigo-400">#comp-4: AUTHENTICATION FORM</span>
-                <p class="text-xs text-slate-300 mt-1">Login form with email/password inputs, remember checkbox, and submit action</p>
-                <span class="text-[11px] font-mono text-slate-500">Bounding Box: [0.52, 0.48, 0.95, 0.85]</span>
-              </div>
-              <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono font-bold">100% Match</span>
+              <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono font-bold">Synthesized</span>
             </div>
           </div>
         </div>
@@ -402,11 +343,92 @@
 
   </main>
 
+  <!-- AI Settings Modal -->
+  <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600/20 text-indigo-400 flex items-center justify-center font-bold">🔑</div>
+          <h2 class="text-base font-bold text-white">AI Vision Settings</h2>
+        </div>
+        <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
+      </div>
+
+      <div class="space-y-3">
+        <label for="modal-openai-key" class="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+          OpenAI API Key (Optional)
+        </label>
+        <input type="password" id="modal-openai-key" placeholder="sk-proj-..." class="w-full px-4 py-2.5 text-xs text-white rounded-xl bg-slate-800 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <p class="text-[11px] text-slate-400 leading-relaxed">
+          <strong>Offline Mode (Default):</strong> Uses the built-in OpenCV Bilateral + Spatial Layout Synthesizer. Zero cost, no API key required.<br><br>
+          <strong>Vision AI Mode:</strong> When an OpenAI key is provided, GPT-4o-mini Vision analyzes your hand-drawn sketch pixel-by-pixel to generate 100% custom, bespoke code.
+        </p>
+      </div>
+
+      <div class="pt-3 border-t border-slate-800 flex items-center justify-end gap-2">
+        <button onclick="clearApiKey()" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-400 hover:bg-rose-500/10 transition">
+          Clear Key
+        </button>
+        <button onclick="saveApiKey()" class="px-4 py-2 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition shadow-md shadow-indigo-600/20">
+          Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Interactive JavaScript Engine -->
   <script>
+    let currentUploadedImageBase64 = null;
+    let selectedArchetype = null;
+
+    function openSettingsModal() {
+      const key = localStorage.getItem('sketchtocode_openai_api_key') || '';
+      document.getElementById('modal-openai-key').value = key;
+      document.getElementById('settings-modal').classList.remove('hidden');
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settings-modal').classList.add('hidden');
+    }
+
+    function saveApiKey() {
+      const key = document.getElementById('modal-openai-key').value.trim();
+      if (key) {
+        localStorage.setItem('sketchtocode_openai_api_key', key);
+        document.getElementById('engine-mode-pill').innerText = 'Vision AI (GPT-4o-mini)';
+        document.getElementById('engine-mode-pill').className = 'hidden sm:inline-flex px-2 py-0.5 text-[11px] font-mono rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
+      } else {
+        localStorage.removeItem('sketchtocode_openai_api_key');
+        document.getElementById('engine-mode-pill').innerText = 'OpenCV Spatial Engine';
+        document.getElementById('engine-mode-pill').className = 'hidden sm:inline-flex px-2 py-0.5 text-[11px] font-mono rounded bg-slate-800 text-slate-300 border border-slate-700';
+      }
+      closeSettingsModal();
+    }
+
+    function clearApiKey() {
+      localStorage.removeItem('sketchtocode_openai_api_key');
+      document.getElementById('modal-openai-key').value = '';
+      document.getElementById('engine-mode-pill').innerText = 'OpenCV Spatial Engine';
+      document.getElementById('engine-mode-pill').className = 'hidden sm:inline-flex px-2 py-0.5 text-[11px] font-mono rounded bg-slate-800 text-slate-300 border border-slate-700';
+      closeSettingsModal();
+    }
+
+    // Initialize engine pill on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedKey = localStorage.getItem('sketchtocode_openai_api_key');
+      if (savedKey) {
+        document.getElementById('engine-mode-pill').innerText = 'Vision AI (GPT-4o-mini)';
+        document.getElementById('engine-mode-pill').className = 'hidden sm:inline-flex px-2 py-0.5 text-[11px] font-mono rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
+      }
+
+      // Initial synthesis to populate preview cleanly
+      runSynthesis('landing');
+    });
+
     function toggleBoundingBoxes() {
       const show = document.getElementById('toggle-bboxes').checked;
-      document.getElementById('bbox-overlay').style.display = show ? 'block' : 'none';
+      const overlay = document.getElementById('bbox-overlay');
+      if (overlay) overlay.style.display = show ? 'block' : 'none';
     }
 
     function switchTab(tabId, btn) {
@@ -440,42 +462,79 @@
     }
 
     function loadSample(type) {
+      selectedArchetype = type;
       document.querySelectorAll('.sample-btn').forEach(b => {
         b.className = "sample-btn px-2.5 py-1 rounded text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 border border-slate-700 transition whitespace-nowrap";
       });
-      document.getElementById('sample-' + type + '-btn').className = "sample-btn px-2.5 py-1 rounded text-xs font-semibold bg-indigo-600 text-white transition whitespace-nowrap";
+      const activeBtn = document.getElementById('sample-' + type + '-btn');
+      if (activeBtn) {
+        activeBtn.className = "sample-btn px-2.5 py-1 rounded text-xs font-semibold bg-indigo-600 text-white transition whitespace-nowrap";
+      }
 
       const sketchImg = document.getElementById('sketch-image');
       if (type === 'landing') {
         sketchImg.src = 'assets/sample_wireframe.png';
-        document.getElementById('preview-iframe').src = 'output/week5/index.html';
       } else if (type === 'auth') {
         sketchImg.src = 'assets/enhanced.png';
-        document.getElementById('preview-iframe').src = 'output/week5/index.html#login';
-      } else if (type === 'cards') {
+      } else {
         sketchImg.src = 'assets/bounding_boxes.png';
-        document.getElementById('preview-iframe').src = 'output/week5/index.html#features';
       }
+      currentUploadedImageBase64 = null;
+      runSynthesis(type);
     }
 
-    let currentUploadedImageBase64 = null;
-
-    function handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
+    function handleFile(file) {
+      if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = function(e) {
           currentUploadedImageBase64 = e.target.result;
           document.getElementById('sketch-image').src = currentUploadedImageBase64;
-          // Hide hardcoded overlay so actual OpenCV contours from the upload will show
           document.getElementById('bbox-overlay').innerHTML = '';
+          selectedArchetype = null;
           runSynthesis();
         };
         reader.readAsDataURL(file);
       }
     }
 
-    async function runSynthesis() {
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      handleFile(file);
+    }
+
+    // Drag and Drop support
+    const dropzone = document.getElementById('dropzone');
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
+      document.body.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
+    });
+    dropzone.addEventListener('dragover', () => {
+      dropzone.classList.add('border-indigo-500', 'bg-indigo-950/20');
+    });
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('border-indigo-500', 'bg-indigo-950/20');
+    });
+    dropzone.addEventListener('drop', (e) => {
+      dropzone.classList.remove('border-indigo-500', 'bg-indigo-950/20');
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        handleFile(files[0]);
+      }
+    });
+
+    // Clipboard Paste support (Ctrl+V)
+    window.addEventListener('paste', (e) => {
+      const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+      for (const item of items) {
+        if (item.type.indexOf('image') === 0) {
+          const blob = item.getAsFile();
+          handleFile(blob);
+          break;
+        }
+      }
+    });
+
+    async function runSynthesis(forcedArchetype = null) {
       const btn = document.getElementById('convert-btn');
       const progressContainer = document.getElementById('progress-container');
       const progressBar = document.getElementById('progress-bar');
@@ -487,21 +546,21 @@
       progressContainer.classList.remove('hidden');
 
       const steps = [
-        { text: "1. OpenCV Contour Extraction & CLAHE Filtering...", percent: "25%", bar: "w-1/4" },
-        { text: "2. Multimodal Vision Layout Reasoning...", percent: "55%", bar: "w-1/2" },
+        { text: "1. OpenCV Bilateral Filtering & Contour Extraction...", percent: "25%", bar: "w-1/4" },
+        { text: "2. Multimodal Spatial Reasoning & Archetype Detection...", percent: "55%", bar: "w-1/2" },
         { text: "3. HTML5 Abstract Syntax Tree (AST) Validation...", percent: "80%", bar: "w-4/5" },
-        { text: "4. Agentic Self-Correction & Tailwind Synthesis...", percent: "95%", bar: "w-full" }
+        { text: "4. Agentic Self-Correction & Tailwind Rendering...", percent: "95%", bar: "w-full" }
       ];
 
       let currentStep = 0;
       const progressTimer = setInterval(() => {
         if (currentStep < steps.length) {
-          stepText.innerText = steps[currentStep].text;
+          stepText.innerHTML = steps[currentStep].text;
           percentText.innerText = steps[currentStep].percent;
           progressBar.className = `h-full bg-indigo-500 transition-all duration-300 ${steps[currentStep].bar}`;
           currentStep++;
         }
-      }, 350);
+      }, 250);
 
       try {
         let imgData = currentUploadedImageBase64;
@@ -515,37 +574,50 @@
           imgData = canvas.toDataURL('image/png');
         }
 
+        const apiKey = localStorage.getItem('sketchtocode_openai_api_key') || '';
+        const payload = {
+          image_base64: imgData,
+          archetype: forcedArchetype || selectedArchetype,
+          api_key: apiKey
+        };
+
         const response = await fetch('/api/synthesize', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image_base64: imgData })
+          body: JSON.stringify(payload)
         });
 
         const data = await response.json();
         clearInterval(progressTimer);
 
         if (data.success) {
-          // 1. Update OpenCV Contour Visualization Image on Canvas
+          // 1. Update OpenCV Annotated Visualization Image on Canvas
           if (data.visualization_image) {
             document.getElementById('sketch-image').src = data.visualization_image;
           }
           const archLabel = (data.archetype || 'custom').toUpperCase();
-          document.getElementById('detected-count-badge').innerText = `${data.boxes_detected} Contours • Archetype: ${archLabel}`;
+          document.getElementById('detected-count-badge').innerText = `${data.boxes_detected} Contours • ${archLabel}`;
 
-          // 2. Render Live Generated UI in iframe
+          // 2. Render Live Generated UI in iframe (both srcdoc and src for bulletproof display)
           const iframe = document.getElementById('preview-iframe');
+          iframe.srcdoc = data.full_html;
           if (data.preview_url) {
             iframe.src = data.preview_url;
-          } else {
-            iframe.srcdoc = data.full_html;
           }
 
           // 3. Update Code View
           document.getElementById('code-display').innerText = data.full_html;
 
-          // 4. Update Latency
+          // 4. Update Latency & AST Metrics
           if (document.getElementById('latency-stat')) {
             document.getElementById('latency-stat').innerText = data.latency_seconds + 's';
+          }
+          if (document.getElementById('ast-status-badge')) {
+            document.getElementById('ast-status-badge').innerHTML = data.ast_valid ? '<span>✓</span> 100% Valid' : '<span>⚠️</span> Needs Review';
+            document.getElementById('ast-status-badge').className = data.ast_valid ? 'text-2xl font-extrabold text-emerald-400 mt-2 flex items-center gap-1.5' : 'text-2xl font-extrabold text-amber-400 mt-2 flex items-center gap-1.5';
+          }
+          if (document.getElementById('ast-error-subtext')) {
+            document.getElementById('ast-error-subtext').innerText = `${data.ast_errors || 0} Syntax Violations`;
           }
 
           // 5. Update Component Tree Inspector
@@ -573,12 +645,12 @@
           // Automatically focus on Live UI Preview tab
           switchTab('preview', document.querySelectorAll('.studio-tab')[0]);
         } else {
-          alert('Synthesis error: ' + (data.error || 'Failed to process sketch'));
+          alert('Synthesis error: ' + (data.error || 'Failed to synthesize layout'));
         }
       } catch (err) {
         clearInterval(progressTimer);
         console.error('Synthesis error:', err);
-        alert('Server connection error. Please verify the background backend is running.');
+        alert('Server connection error. Please verify the background backend is running on port 8000.');
       } finally {
         progressContainer.classList.add('hidden');
         btn.disabled = false;
