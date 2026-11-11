@@ -1,80 +1,529 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-900 text-slate-100">
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UI Sketch-to-Code Converter | Interactive Portal</title>
+  <title>SketchToCode AI — Autonomous Wireframe to Tailwind Synthesis</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    .cv-bbox {
+      transition: all 0.2s ease;
+    }
+    .cv-bbox:hover {
+      background-color: rgba(99, 102, 241, 0.25) !important;
+      border-color: #818cf8 !important;
+    }
   </style>
 </head>
-<body class="h-full flex flex-col overflow-hidden">
-  <!-- Top Navigation Header -->
-  <header class="bg-slate-950 border-b border-slate-800 px-6 py-3.5 flex items-center justify-between shrink-0 z-50">
-    <div class="flex items-center gap-4">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-indigo-500/20">
+<body class="h-full flex flex-col overflow-hidden bg-slate-950 text-slate-100">
+
+  <!-- Main Top Navigation -->
+  <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 px-6 py-3.5 flex items-center justify-between shrink-0 z-50">
+    <div class="flex items-center gap-3.5">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-indigo-500/25">
         ⚡
       </div>
       <div>
-        <div class="flex items-center gap-2">
-          <h1 class="text-base font-bold text-white tracking-tight">UI Sketch-to-Code Converter</h1>
-          <span class="px-2 py-0.5 text-xs font-semibold rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono">COM71123</span>
-          <span class="px-2 py-0.5 text-xs font-semibold rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">ONLINE</span>
+        <div class="flex items-center gap-2.5">
+          <h1 class="text-lg font-bold text-white tracking-tight">SketchToCode <span class="text-indigo-400">AI</span></h1>
+          <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Engine Ready
+          </span>
         </div>
-        <p class="text-xs text-slate-400">Agentic Multimodal Code Generation, AST Validation & Self-Correction</p>
+        <p class="text-xs text-slate-400">Autonomous Wireframe-to-Tailwind Synthesis & AST Self-Correction Studio</p>
       </div>
     </div>
 
-    <!-- View Switcher Tabs -->
-    <nav class="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
-      <button onclick="switchView('output/week5/index.html', this)" class="nav-tab active px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-indigo-600 text-white shadow-sm flex items-center gap-1.5">
-        <span>🌐</span> Live Generated Site
-      </button>
-      <button onclick="switchView('output/week8/index.html', this)" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
-        <span>🔄</span> Week 8 Self-Correction
-      </button>
-      <button onclick="switchView('output/week7/index.html', this)" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
-        <span>🎯</span> Week 7 Error Routing
-      </button>
-      <button onclick="switchView('output/week6/index.html', this)" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
-        <span>🌳</span> Week 6 AST Validator
-      </button>
-      <button onclick="switchView('output/week4/index.html', this)" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
-        <span>🔀</span> Week 4 Routing
-      </button>
-      <button onclick="switchView('output/week3/index.html', this)" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
-        <span>📝</span> Week 3 Initial
-      </button>
-    </nav>
-
-    <!-- External Controls -->
+    <!-- Quick Action Bar -->
     <div class="flex items-center gap-3">
-      <a id="external-link" href="output/week5/index.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors">
-        <span>Open in New Tab</span>
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-      </a>
+      <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs text-slate-300">
+        <span class="text-slate-400">Vision Model:</span>
+        <span class="font-semibold text-indigo-400">Multimodal Auto-Router</span>
+        <span class="text-slate-600">•</span>
+        <span class="text-slate-400">Validator:</span>
+        <span class="font-semibold text-emerald-400">HTML5 AST Engine</span>
+      </div>
+
+      <button onclick="copyCode()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+        <span id="copy-btn-text">Copy Code</span>
+      </button>
+
+      <button onclick="downloadCode()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/20 transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        <span>Download HTML</span>
+      </button>
     </div>
   </header>
 
-  <!-- Main Viewport / Iframe -->
-  <main class="flex-1 w-full bg-slate-900 relative">
-    <iframe id="viewport" src="output/week5/index.html" class="w-full h-full border-none bg-white" title="Project Preview"></iframe>
+  <!-- Studio Split-Screen Workspace -->
+  <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+
+    <!-- LEFT PANEL: Input Sketch & Computer Vision Preprocessor (5 Cols) -->
+    <section class="lg:col-span-5 border-r border-slate-800 bg-slate-900/40 flex flex-col h-full overflow-y-auto">
+      <!-- Section Header -->
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+            <span>✏️</span> Wireframe Input
+          </span>
+          <span id="detected-count-badge" class="px-2 py-0.5 text-xs font-medium rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            5 Components Detected
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-slate-400 flex items-center gap-1.5 cursor-pointer select-none">
+            <input type="checkbox" id="toggle-bboxes" checked onchange="toggleBoundingBoxes()" class="rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-0">
+            <span>Show OpenCV Contours</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Sample Wireframe Selector -->
+      <div class="px-4 py-3 bg-slate-900/80 border-b border-slate-800 flex items-center gap-2">
+        <span class="text-xs font-medium text-slate-400 shrink-0">Preset Wireframes:</span>
+        <div class="flex items-center gap-1.5 overflow-x-auto w-full">
+          <button onclick="loadSample('landing')" id="sample-landing-btn" class="sample-btn px-2.5 py-1 rounded text-xs font-semibold bg-indigo-600 text-white transition whitespace-nowrap">
+            Landing Page
+          </button>
+          <button onclick="loadSample('auth')" id="sample-auth-btn" class="sample-btn px-2.5 py-1 rounded text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 border border-slate-700 transition whitespace-nowrap">
+            Auth & Login Form
+          </button>
+          <button onclick="loadSample('cards')" id="sample-cards-btn" class="sample-btn px-2.5 py-1 rounded text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 border border-slate-700 transition whitespace-nowrap">
+            Card Gallery
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Canvas Area -->
+      <div class="p-4 flex-1 flex flex-col items-center justify-center">
+        <div class="relative w-full max-w-md aspect-[4/5] bg-slate-900 border-2 border-dashed border-slate-700 hover:border-indigo-500/50 rounded-2xl overflow-hidden transition-all shadow-inner group flex items-center justify-center" id="dropzone">
+          
+          <!-- Wireframe Image -->
+          <img id="sketch-image" src="assets/sample_wireframe.png" alt="Hand-Drawn Wireframe" class="w-full h-full object-contain p-2 select-none" />
+
+          <!-- Overlaid OpenCV Bounding Boxes -->
+          <div id="bbox-overlay" class="absolute inset-0 pointer-events-none p-2">
+            <!-- Nav BBox -->
+            <div class="cv-bbox absolute border-2 border-emerald-400 bg-emerald-500/10 rounded pointer-events-auto" style="top: 2%; left: 4%; width: 92%; height: 10%;" title="Component 1: Navbar (OpenCV Contour #1)">
+              <span class="absolute top-1 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-600 text-white shadow">NAVBAR</span>
+            </div>
+            <!-- Hero BBox -->
+            <div class="cv-bbox absolute border-2 border-indigo-400 bg-indigo-500/10 rounded pointer-events-auto" style="top: 15%; left: 4%; width: 92%; height: 32%;" title="Component 2: Hero Section (OpenCV Contour #2)">
+              <span class="absolute top-1 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-600 text-white shadow">HERO SECTION</span>
+            </div>
+            <!-- Card BBox -->
+            <div class="cv-bbox absolute border-2 border-purple-400 bg-purple-500/10 rounded pointer-events-auto" style="top: 50%; left: 4%; width: 44%; height: 36%;" title="Component 3: Content Card (OpenCV Contour #3)">
+              <span class="absolute top-1 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-600 text-white shadow">CARD</span>
+            </div>
+            <!-- Input & Form BBox -->
+            <div class="cv-bbox absolute border-2 border-amber-400 bg-amber-500/10 rounded pointer-events-auto" style="top: 50%; left: 52%; width: 44%; height: 36%;" title="Component 4: Auth Form (OpenCV Contour #4)">
+              <span class="absolute top-1 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-600 text-white shadow">AUTH FORM</span>
+            </div>
+            <!-- Footer BBox -->
+            <div class="cv-bbox absolute border-2 border-sky-400 bg-sky-500/10 rounded pointer-events-auto" style="top: 89%; left: 4%; width: 92%; height: 8%;" title="Component 5: Footer (OpenCV Contour #5)">
+              <span class="absolute top-1 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-600 text-white shadow">FOOTER</span>
+            </div>
+          </div>
+
+          <!-- Upload Overlay on Hover -->
+          <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-6 text-center cursor-pointer" onclick="document.getElementById('file-input').click()">
+            <svg class="w-10 h-10 text-indigo-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+            <p class="text-sm font-semibold text-white">Click or Drop Wireframe Image</p>
+            <p class="text-xs text-slate-400 mt-1">Supports PNG, JPG, JPEG sketches</p>
+          </div>
+          <input type="file" id="file-input" accept="image/*" class="hidden" onchange="handleFileUpload(event)">
+        </div>
+      </div>
+
+      <!-- Synthesis Control Bar -->
+      <div class="p-4 border-t border-slate-800 bg-slate-900/60 space-y-3 shrink-0">
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="p-2 rounded-lg bg-slate-800/60 border border-slate-700/60">
+            <span class="text-slate-400 block text-[11px]">Computer Vision:</span>
+            <span class="font-semibold text-slate-200">OpenCV CLAHE + Contour</span>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-800/60 border border-slate-700/60">
+            <span class="text-slate-400 block text-[11px]">Refinement Guard:</span>
+            <span class="font-semibold text-emerald-400">Self-Correction Active</span>
+          </div>
+        </div>
+
+        <button onclick="runSynthesis()" id="convert-btn" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition-all">
+          <span id="btn-icon">⚡</span>
+          <span id="btn-text">Synthesize Code from Sketch</span>
+        </button>
+
+        <!-- Live Conversion Progress Bar (hidden by default) -->
+        <div id="progress-container" class="hidden space-y-1.5 pt-1">
+          <div class="flex items-center justify-between text-xs text-slate-300">
+            <span id="progress-step-text" class="font-mono text-[11px]">1. OpenCV Contour Extraction...</span>
+            <span id="progress-percent" class="font-bold text-indigo-400">25%</span>
+          </div>
+          <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div id="progress-bar" class="h-full bg-indigo-500 transition-all duration-300 w-1/4"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: Live Studio Output (7 Cols) -->
+    <section class="lg:col-span-7 flex flex-col h-full bg-slate-950 overflow-hidden">
+      
+      <!-- Studio Tabs Header -->
+      <div class="px-4 py-2.5 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between shrink-0">
+        <!-- View Tabs -->
+        <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+          <button onclick="switchTab('preview', this)" class="studio-tab active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition flex items-center gap-1.5 shadow-sm">
+            <span>🌐</span> Live UI Preview
+          </button>
+          <button onclick="switchTab('code', this)" class="studio-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+            <span>💻</span> Generated HTML
+          </button>
+          <button onclick="switchTab('ast', this)" class="studio-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+            <span>🛡️</span> AST & Self-Correction
+          </button>
+          <button onclick="switchTab('components', this)" class="studio-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+            <span>🧩</span> Component Inspector
+          </button>
+        </div>
+
+        <!-- Viewport Resize Controls (Visible for Preview) -->
+        <div id="viewport-controls" class="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs">
+          <button onclick="setViewport('desktop')" id="vp-desktop" class="vp-btn px-2 py-1 rounded text-slate-200 bg-slate-800 font-medium" title="Desktop View (100%)">
+            Desktop
+          </button>
+          <button onclick="setViewport('tablet')" id="vp-tablet" class="vp-btn px-2 py-1 rounded text-slate-400 hover:text-slate-200 font-medium" title="Tablet View (768px)">
+            Tablet
+          </button>
+          <button onclick="setViewport('mobile')" id="vp-mobile" class="vp-btn px-2 py-1 rounded text-slate-400 hover:text-slate-200 font-medium" title="Mobile View (375px)">
+            Mobile
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="flex-1 overflow-hidden relative">
+
+        <!-- TAB 1: Live Interactive Preview -->
+        <div id="content-preview" class="studio-content w-full h-full flex items-center justify-center bg-slate-900/30 p-2 overflow-auto">
+          <div id="preview-wrapper" class="w-full h-full bg-white rounded-xl shadow-2xl overflow-hidden transition-all duration-300">
+            <iframe id="preview-iframe" src="output/week5/index.html" class="w-full h-full border-none" title="Live Preview"></iframe>
+          </div>
+        </div>
+
+        <!-- TAB 2: Generated Code View -->
+        <div id="content-code" class="studio-content hidden w-full h-full flex flex-col bg-slate-950 p-4 overflow-hidden">
+          <div class="flex items-center justify-between pb-2 text-xs text-slate-400 border-b border-slate-800">
+            <span class="font-mono">synthesized_template.html (Tailwind CSS Ready)</span>
+            <span class="text-indigo-400">145 Lines • Semantic HTML5</span>
+          </div>
+          <pre class="flex-1 overflow-auto mt-3 p-4 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-slate-300 leading-relaxed font-mono select-all"><code id="code-display">&lt;!DOCTYPE html&gt;
+&lt;html lang="en" class="h-full bg-slate-50"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Synthesized UI Application&lt;/title&gt;
+  &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body class="min-h-full flex flex-col antialiased text-slate-800"&gt;
+
+  &lt;!-- Component #1: Navigation Bar --&gt;
+  &lt;nav role="navigation" aria-label="Main Navigation" class="w-full flex items-center justify-between px-6 py-4 bg-white/95 backdrop-blur border-b border-gray-200 sticky top-0 z-50"&gt;
+    &lt;div class="flex items-center gap-3"&gt;
+      &lt;div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-black text-lg shadow-md"&gt;S&lt;/div&gt;
+      &lt;span class="text-xl font-bold tracking-tight text-gray-900"&gt;SketchUI&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600"&gt;
+      &lt;a href="#" class="text-indigo-600 font-semibold"&gt;Home&lt;/a&gt;
+      &lt;a href="#features" class="hover:text-indigo-600 transition-colors"&gt;Features&lt;/a&gt;
+      &lt;a href="#pricing" class="hover:text-indigo-600 transition-colors"&gt;Pricing&lt;/a&gt;
+      &lt;a href="#docs" class="hover:text-indigo-600 transition-colors"&gt;Docs&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;div class="flex items-center gap-3"&gt;
+      &lt;a href="#login" class="text-sm font-medium text-gray-700 hover:text-indigo-600 px-3 py-2"&gt;Sign in&lt;/a&gt;
+      &lt;a href="#signup" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm"&gt;Get Started&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/nav&gt;
+
+  &lt;!-- Component #2: Hero Section --&gt;
+  &lt;section class="relative overflow-hidden py-16 md:py-24 px-6 max-w-6xl mx-auto text-center"&gt;
+    &lt;div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold mb-6"&gt;
+      &lt;span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"&gt;&lt;/span&gt;
+      &lt;span&gt;Announcing v2.0 AI Sketch Parser&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 max-w-4xl mx-auto leading-tight"&gt;
+      Transform Wireframe Sketches into &lt;span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600"&gt;Production Code&lt;/span&gt;
+    &lt;/h1&gt;
+    &lt;p class="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto"&gt;
+      Accelerate frontend sprints from hours to seconds. Converts pencil drawings into clean Tailwind HTML.
+    &lt;/p&gt;
+  &lt;/section&gt;
+
+  &lt;!-- Component #3: Authentication Form &amp; Input Fields --&gt;
+  &lt;div class="max-w-md w-full mx-auto p-8 bg-white rounded-2xl shadow-xl border border-gray-100 mb-12"&gt;
+    &lt;h2 class="text-2xl font-bold tracking-tight text-gray-900 text-center mb-6"&gt;Welcome Back&lt;/h2&gt;
+    &lt;form class="space-y-4"&gt;
+      &lt;input type="email" required placeholder="you@company.com" class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300" /&gt;
+      &lt;input type="password" required placeholder="••••••••" class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300" /&gt;
+      &lt;button type="submit" class="w-full py-3 px-4 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md"&gt;Sign In&lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+
+        <!-- TAB 3: AST & Self-Correction Engine Diagnostics -->
+        <div id="content-ast" class="studio-content hidden w-full h-full p-6 overflow-y-auto space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">AST Compliance</div>
+              <div class="text-2xl font-extrabold text-emerald-400 mt-2 flex items-center gap-1.5">
+                <span>✓</span> 100% Valid
+              </div>
+              <div class="text-xs text-slate-500 mt-1">0 Syntax Violations</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Self-Correction State</div>
+              <div class="text-2xl font-extrabold text-indigo-400 mt-2">CONVERGED</div>
+              <div class="text-xs text-slate-500 mt-1">Autonomous Healing Complete</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Healing Velocity</div>
+              <div class="text-2xl font-extrabold text-amber-400 mt-2">1.00 Δ</div>
+              <div class="text-xs text-slate-500 mt-1">Single-Cycle Resolution</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pipeline Latency</div>
+              <div class="text-2xl font-extrabold text-slate-200 mt-2">0.608s</div>
+              <div class="text-xs text-slate-500 mt-1">Total Generation Time</div>
+            </div>
+          </div>
+
+          <!-- Diagnostic Rules Audit Table -->
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span>🛡️</span> Abstract Syntax Tree (AST) Rules Evaluated
+            </h3>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-800">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span class="font-mono text-slate-200">close-order</span>
+                  <span class="text-slate-400">— Enforces strict hierarchical closing tag symmetry</span>
+                </div>
+                <span class="px-2 py-0.5 rounded text-emerald-400 bg-emerald-500/10 font-mono font-semibold">PASSED</span>
+              </div>
+
+              <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-800">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span class="font-mono text-slate-200">no-dup-id</span>
+                  <span class="text-slate-400">— Validates document-level identifier uniqueness</span>
+                </div>
+                <span class="px-2 py-0.5 rounded text-emerald-400 bg-emerald-500/10 font-mono font-semibold">PASSED</span>
+              </div>
+
+              <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-800">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span class="font-mono text-slate-200">element-required-attributes</span>
+                  <span class="text-slate-400">— Verifies mandatory attributes (alt, src, type)</span>
+                </div>
+                <span class="px-2 py-0.5 rounded text-emerald-400 bg-emerald-500/10 font-mono font-semibold">PASSED</span>
+              </div>
+
+              <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-800">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span class="font-mono text-slate-200">attr-quotes</span>
+                  <span class="text-slate-400">— Standardizes HTML5 attribute quotes and casing</span>
+                </div>
+                <span class="px-2 py-0.5 rounded text-emerald-400 bg-emerald-500/10 font-mono font-semibold">PASSED</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: Component Inspector -->
+        <div id="content-components" class="studio-content hidden w-full h-full p-6 overflow-y-auto space-y-4">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Detected Spatial Component Tree</h3>
+          <div class="space-y-3">
+            <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between">
+              <div>
+                <span class="text-xs font-mono font-bold text-indigo-400">#comp-1: NAVBAR</span>
+                <p class="text-xs text-slate-300 mt-1">Glassmorphism navigation bar with logo, links, and authentication actions</p>
+                <span class="text-[11px] font-mono text-slate-500">Bounding Box: [0.0, 0.0, 1.0, 0.10]</span>
+              </div>
+              <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono font-bold">100% Match</span>
+            </div>
+
+            <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between">
+              <div>
+                <span class="text-xs font-mono font-bold text-indigo-400">#comp-2: HERO SECTION</span>
+                <p class="text-xs text-slate-300 mt-1">High-impact headline banner with gradient typography and dual CTA buttons</p>
+                <span class="text-[11px] font-mono text-slate-500">Bounding Box: [0.0, 0.10, 1.0, 0.45]</span>
+              </div>
+              <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono font-bold">100% Match</span>
+            </div>
+
+            <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between">
+              <div>
+                <span class="text-xs font-mono font-bold text-indigo-400">#comp-3: CONTENT CARD</span>
+                <p class="text-xs text-slate-300 mt-1">Feature card with gradient media header, category badge, and metadata</p>
+                <span class="text-[11px] font-mono text-slate-500">Bounding Box: [0.05, 0.48, 0.45, 0.85]</span>
+              </div>
+              <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono font-bold">100% Match</span>
+            </div>
+
+            <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between">
+              <div>
+                <span class="text-xs font-mono font-bold text-indigo-400">#comp-4: AUTHENTICATION FORM</span>
+                <p class="text-xs text-slate-300 mt-1">Login form with email/password inputs, remember checkbox, and submit action</p>
+                <span class="text-[11px] font-mono text-slate-500">Bounding Box: [0.52, 0.48, 0.95, 0.85]</span>
+              </div>
+              <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono font-bold">100% Match</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </main>
 
+  <!-- Interactive JavaScript Engine -->
   <script>
-    function switchView(url, tabElement) {
-      document.getElementById('viewport').src = url;
-      document.getElementById('external-link').href = url;
+    function toggleBoundingBoxes() {
+      const show = document.getElementById('toggle-bboxes').checked;
+      document.getElementById('bbox-overlay').style.display = show ? 'block' : 'none';
+    }
 
-      document.querySelectorAll('.nav-tab').forEach(t => {
-        t.className = "nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-1.5";
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.studio-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById('content-' + tabId).classList.remove('hidden');
+
+      document.querySelectorAll('.studio-tab').forEach(el => {
+        el.className = "studio-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5";
+      });
+      btn.className = "studio-tab active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition flex items-center gap-1.5 shadow-sm";
+
+      document.getElementById('viewport-controls').style.display = (tabId === 'preview') ? 'flex' : 'none';
+    }
+
+    function setViewport(mode) {
+      const wrapper = document.getElementById('preview-wrapper');
+      document.querySelectorAll('.vp-btn').forEach(b => {
+        b.className = "vp-btn px-2 py-1 rounded text-slate-400 hover:text-slate-200 font-medium";
       });
 
-      tabElement.className = "nav-tab active px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-indigo-600 text-white shadow-sm flex items-center gap-1.5";
+      if (mode === 'desktop') {
+        wrapper.style.maxWidth = '100%';
+        document.getElementById('vp-desktop').className = "vp-btn px-2 py-1 rounded text-slate-200 bg-slate-800 font-medium";
+      } else if (mode === 'tablet') {
+        wrapper.style.maxWidth = '768px';
+        document.getElementById('vp-tablet').className = "vp-btn px-2 py-1 rounded text-slate-200 bg-slate-800 font-medium";
+      } else if (mode === 'mobile') {
+        wrapper.style.maxWidth = '375px';
+        document.getElementById('vp-mobile').className = "vp-btn px-2 py-1 rounded text-slate-200 bg-slate-800 font-medium";
+      }
+    }
+
+    function loadSample(type) {
+      document.querySelectorAll('.sample-btn').forEach(b => {
+        b.className = "sample-btn px-2.5 py-1 rounded text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 border border-slate-700 transition whitespace-nowrap";
+      });
+      document.getElementById('sample-' + type + '-btn').className = "sample-btn px-2.5 py-1 rounded text-xs font-semibold bg-indigo-600 text-white transition whitespace-nowrap";
+
+      const sketchImg = document.getElementById('sketch-image');
+      if (type === 'landing') {
+        sketchImg.src = 'assets/sample_wireframe.png';
+        document.getElementById('preview-iframe').src = 'output/week5/index.html';
+      } else if (type === 'auth') {
+        sketchImg.src = 'assets/enhanced.png';
+        document.getElementById('preview-iframe').src = 'output/week5/index.html#login';
+      } else if (type === 'cards') {
+        sketchImg.src = 'assets/bounding_boxes.png';
+        document.getElementById('preview-iframe').src = 'output/week5/index.html#features';
+      }
+    }
+
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('sketch-image').src = e.target.result;
+          runSynthesis();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function runSynthesis() {
+      const btn = document.getElementById('convert-btn');
+      const progressContainer = document.getElementById('progress-container');
+      const progressBar = document.getElementById('progress-bar');
+      const stepText = document.getElementById('progress-step-text');
+      const percentText = document.getElementById('progress-percent');
+
+      btn.disabled = true;
+      btn.classList.add('opacity-50', 'cursor-not-allowed');
+      progressContainer.classList.remove('hidden');
+
+      const steps = [
+        { text: "1. OpenCV Contour Extraction & CLAHE Filtering...", percent: "25%", bar: "w-1/4" },
+        { text: "2. Multimodal Vision Layout Reasoning...", percent: "55%", bar: "w-1/2" },
+        { text: "3. HTML5 Abstract Syntax Tree (AST) Validation...", percent: "80%", bar: "w-4/5" },
+        { text: "4. Agentic Self-Correction & Tailwind Synthesis...", percent: "100%", bar: "w-full" }
+      ];
+
+      let currentStep = 0;
+      const interval = setInterval(() => {
+        if (currentStep < steps.length) {
+          stepText.innerText = steps[currentStep].text;
+          percentText.innerText = steps[currentStep].percent;
+          progressBar.className = `h-full bg-indigo-500 transition-all duration-300 ${steps[currentStep].bar}`;
+          currentStep++;
+        } else {
+          clearInterval(interval);
+          setTimeout(() => {
+            progressContainer.classList.add('hidden');
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('preview-iframe').src = 'output/week5/index.html';
+            switchTab('preview', document.querySelectorAll('.studio-tab')[0]);
+          }, 400);
+        }
+      }, 500);
+    }
+
+    function copyCode() {
+      const code = document.getElementById('code-display').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const textSpan = document.getElementById('copy-btn-text');
+        textSpan.innerText = "Copied!";
+        setTimeout(() => textSpan.innerText = "Copy Code", 2000);
+      });
+    }
+
+    function downloadCode() {
+      const code = document.getElementById('code-display').innerText;
+      const blob = new Blob([code], { type: "text/html" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "sketch_to_code_output.html";
+      a.click();
     }
   </script>
 </body>
