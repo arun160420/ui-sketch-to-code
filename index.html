@@ -631,7 +631,7 @@
               : data.full_html;
 
             if (data.full_html.includes('https://cdn.tailwindcss.com') && !safeHtml.includes('https://cdn.tailwindcss.com')) {
-              safeHtml = safeHtml.replace('</head>', '<script src="https://cdn.tailwindcss.com"></script></head>');
+              safeHtml = safeHtml.replace('</head>', '<script src="https://cdn.tailwindcss.com"><\/script></head>');
             }
             iframe.srcdoc = safeHtml;
           }
@@ -747,7 +747,7 @@
             })
           : rawCode;
         if (rawCode.includes('https://cdn.tailwindcss.com') && !cleanCode.includes('https://cdn.tailwindcss.com')) {
-          cleanCode = cleanCode.replace('</head>', '<script src="https://cdn.tailwindcss.com"></script></head>');
+          cleanCode = cleanCode.replace('</head>', '<script src="https://cdn.tailwindcss.com"><\/script></head>');
         }
         const iframe = document.getElementById('preview-iframe');
         if (iframe) iframe.srcdoc = cleanCode;
